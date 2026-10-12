@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Babá Pet App — Painel</title>
+<style>
+  :root { color-scheme: dark; }
+  body { font-family: -apple-system, Segoe UI, Roboto, sans-serif; margin: 0; padding: 18px; background: #0b1220; color: #e8edf5; max-width: 980px; margin-inline: auto; }
+  h1 { font-size: 1.3rem; margin: 0 0 2px; }
+  h3 { font-size: 1rem; margin: 26px 0 10px; color: #cdd6e6; }
+  .sub { color: #8a95ab; margin-bottom: 14px; font-size: .85rem; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; }
+  .card { background: #131c2e; border: 1px solid #223049; border-radius: 12px; padding: 14px; }
+  .card .label { font-size: .75rem; color: #8a95ab; margin-bottom: 4px; }
+  .card .value { font-size: 1.6rem; font-weight: 700; }
+  .card .small { font-size: .75rem; color: #8a95ab; margin-top: 2px; }
+  .teal { color: #14C8C0; } .green { color: #3ecf8e; }
+  .tbl-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: .82rem; }
+  th, td { text-align: left; padding: 7px 8px; border-bottom: 1px solid #223049; white-space: nowrap; }
+  th { color: #8a95ab; font-weight: 500; }
+  .frow { display: grid; grid-template-columns: 1fr auto; gap: 4px 10px; margin-bottom: 10px; font-size: .85rem; }
+  .fbar { grid-column: 1 / -1; height: 8px; background: #1a2740; border-radius: 99px; overflow: hidden; }
+  .fbar > i { display: block; height: 100%; background: #14C8C0; }
+  .note { color: #8a95ab; font-size: .75rem; margin-top: 6px; }
+  .setup { background: #06181a; border: 1px solid #0f5d59; border-radius: 12px; padding: 16px; margin-bottom: 24px; }
+  .setup code { background: #0c2a2c; padding: 2px 6px; border-radius: 4px; }
+  input, select { width: 100%; box-sizing: border-box; padding: 9px; margin-top: 6px; border-radius: 6px; border: 1px solid #334; background: #0e1626; color: #e8edf5; }
+  select { width: auto; margin: 0; }
+  button { padding: 9px 16px; border-radius: 8px; border: none; background: #14C8C0; color: #0b1220; font-weight: 700; cursor: pointer; }
+  button.mini { padding: 3px 9px; font-size: .72rem; background: #26344f; color: #cdd6e6; font-weight: 500; }
+  button.ghost { background: #26344f; color: #e8edf5; }
+  .bar { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 14px; }
+  .bar .sub { margin: 0; }
+  #app { display: none; }
+  a { color: #14C8C0; }
+  .dias { display: flex; align-items: flex-end; gap: 4px; height: 90px; margin-top: 6px; }
+  .dias div { flex: 1; background: #14C8C0; border-radius: 4px 4px 0 0; min-height: 2px; position: relative; }
+  .dias div span { position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); font-size: .65rem; color: #8a95ab; }
+  .dias-l { display: flex; gap: 4px; font-size: .62rem; color: #8a95ab; } .dias-l span { flex: 1; text-align: center; }
+</style>
+</head>
+<body>
+<h1>🦦 Babá Pet App — Painel</h1>
+<div class="sub">Uso pessoal. Nunca publique nem hospede este arquivo (nem coloque no GitHub Pages).</div>
+
+<div class="setup" id="setup">
+  <strong>Configuração (só na 1ª vez neste navegador)</strong>
+  <p style="font-size:.85rem;color:#7fd6d1">
+    Use a <code>service_role key</code> do Supabase (Settings → API → "service_role"), NÃO a anon key.
+    Ela lê tudo, então fica só neste navegador: nunca no app, nunca em repositório.
+  </p>
+  <label>Project URL<input id="in-url" placeholder="https://xxxxx.supabase.co"></label>
+  <label>Service role key<input id="in-key" placeholder="eyJhbGciOi..." type="password"></label>
+  <p><button onclick="salvarConfig()">Salvar e carregar painel</button></p>
+</div>
+
+<div id="app">
+  <div class="bar">
+    <select id="periodo">
+      <option value="7d">Últimos 7 dias</option>
+      <option value="24h">Últimas 24 horas</option>
+      <option value="30d">Últimos 30 dias</option>
+      <option value="tudo">Tudo</option>
+    </select>
+    <button id="btn-atualizar">Atualizar</button>
+    <span id="atualizado" class="sub"></span>
+  </div>
+
+  <div class="grid" id="cards"></div>
+  <div class="note">Os números valem para aparelhos <b>novos</b> (1º acesso dentro do período). Aparelho = um navegador/celular; limpar os dados do navegador gera um aparelho novo.</div>
+
+  <h3>Funil: onde as pessoas ficam pelo caminho</h3>
+  <div id="funil"></div>
+
+  <h3>Visitantes por dia (14 dias)</h3>
+  <div id="grafdias"></div>
+
+  <h3>Recursos mais usados (ações feitas)</h3>
+  <div id="recursos"></div>
+
+  <h3>Espécies cadastradas</h3>
+  <div class="tbl-wrap"><table id="tbl-esp"><thead><tr><th>Espécie</th><th>Pets</th></tr></thead><tbody></tbody></table></div>
+
+  <h3>Telas mais acessadas</h3>
+  <div class="tbl-wrap"><table id="tbl-telas"><thead><tr><th>Tela</th><th>Visualizações</th><th>Aparelhos</th></tr></thead><tbody></tbody></table></div>
+
+  <h3>De onde vieram</h3>
+  <div class="tbl-wrap"><table id="tbl-origem"><thead><tr><th>Origem</th><th>Aparelhos</th></tr></thead><tbody></tbody></table></div>
+  <div class="note">Dica: coloque <code>?utm_source=instagram&amp;utm_campaign=nome</code> no fim do link que você divulga.</div>
+
+  <h3>Região (fuso do aparelho)</h3>
+  <div id="resumo-regiao" class="note" style="margin:0 0 8px"></div>
+  <div class="tbl-wrap"><table id="tbl-regiao"><thead><tr><th>Fuso / região</th><th>Aparelhos</th></tr></thead><tbody></tbody></table></div>
+
+  <h3>Aparelhos</h3>
+  <div class="tbl-wrap"><table id="tbl-dev"><thead><tr><th>Aparelho</th><th>1º acesso</th><th>Sessões</th><th>Foi até</th><th>Instalado</th><th>Origem</th><th></th></tr></thead><tbody></tbody></table></div>
+  <div class="note" id="ocultos"></div>
+
+  <p style="margin-top:24px"><button class="ghost" id="btn-trocar">Trocar credenciais</button></p>
+</div>
+
+<script>
+const STEP_ORDER = ['visit', 'pet', 'uso', 'volta', 'install'];
+const STEP_LABEL = { visit: 'Abriram o app', pet: 'Cadastraram um pet', uso: 'Usaram um recurso (agenda, vacina, peso, gasto, refeição ou plano)', volta: 'Voltaram em outro dia', install: 'Instalaram na tela inicial' };
+const STEP_CURTO = { visit: 'Abriu o app', pet: 'Cadastrou pet', uso: 'Usou recurso', volta: 'Voltou', install: 'Instalou' };
+const IMPLICA = { pet: ['visit'], uso: ['pet'], volta: ['visit'], install: ['visit'] };
+const USO = { vacina_add: 'Vacina', agenda_add: 'Agenda', gasto_add: 'Gasto', peso_add: 'Peso', refeicao_add: 'Refeição', plano_add: 'Plano de saúde' };
+const ESP = { cao: 'Cachorro', gato: 'Gato', ave: 'Ave', roedor: 'Roedor', coelho: 'Coelho', reptil: 'Réptil', peixe: 'Peixe', outro: 'Outro' };
+const TELA = { inicio: 'Início', saude: 'Saúde', comida: 'Comida', agenda: 'Agenda', gastos: 'Gastos', mais: 'Mais', biblioteca: 'Biblioteca', album: 'Álbum', peso: 'Peso' };
+const FUSOS_BR = new Set(['America/Sao_Paulo','America/Manaus','America/Fortaleza','America/Recife','America/Bahia','America/Belem','America/Cuiaba','America/Campo_Grande','America/Porto_Velho','America/Rio_Branco','America/Boa_Vista','America/Noronha','America/Araguaina','America/Maceio','America/Santarem','America/Eirunepe']);
+
+// Qualquer pessoa com a chave pública consegue inserir linhas: tudo que vem do banco é texto não confiável.
+const esc = v => String(v == null ? '' : v).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+const curto = (v, n) => { v = String(v == null ? '' : v); return v.length > n ? v.slice(0, n) + '…' : v; };
+const diaBR = ms => new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Sao_Paulo' }).format(new Date(ms));
+const fmtHora = ms => new Intl.DateTimeFormat('pt-BR', { timeZone: 'America/Sao_Paulo', day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }).format(new Date(ms));
+const pct = (a, b) => b ? Math.round(a / b * 100) : 0;
+const origemLabel = ex => ex.utm ? 'utm: ' + ex.utm + (ex.camp ? ' / ' + ex.camp : '') : ex.ref ? 'via ' + ex.ref : 'direto / sem origem';
+const regiaoLabel = tz => !tz ? 'sem dado' : FUSOS_BR.has(tz) ? 'Brasil · ' + tz.split('/')[1].replace(/_/g, ' ') : 'Exterior · ' + tz;
+const contarPor = (itens, f) => { const m = new Map(); itens.forEach(i => { const k = f(i); m.set(k, (m.get(k) || 0) + 1); }); return [...m.entries()].sort((a, b) => b[1] - a[1]); };
+function fechar(set) { let m = true; while (m) { m = false; for (const s of [...set]) for (const q of (IMPLICA[s] || [])) if (!set.has(q)) { set.add(q); m = true; } } }
+const extraDe = e => (e.extra && typeof e.extra === 'object') ? e.extra : {};
+
+function analisar(all, hidden, corte) {
+  const evs = all.filter(e => e && e.device && !hidden.has(e.device));
+  const devs = new Map();
+  for (const e of evs) {
+    const t = Date.parse(e.created_at); if (Number.isNaN(t)) continue;
+    let d = devs.get(e.device);
+    if (!d) { d = { id: e.device, first: t, last: t, sessions: 0, days: new Set(), steps: new Set(), src: null, tz: null }; devs.set(e.device, d); }
+    if (t < d.first) d.first = t; if (t > d.last) d.last = t;
+    const ex = extraDe(e);
+    d.days.add(diaBR(t));
+    if (e.event === 'session_start') { d.steps.add('visit'); d.sessions++; if (d.src === null) d.src = origemLabel(ex); if (!d.tz && ex.tz) d.tz = String(ex.tz); if (ex.pwa) d.steps.add('install'); }
+    else if (e.event === 'pet_criado') d.steps.add('pet');
+    else if (USO[e.event]) d.steps.add('uso');
+    else if (e.event === 'app_install') d.steps.add('install');
+  }
+  const todos = [...devs.values()];
+  todos.forEach(d => { if (d.days.size >= 2) d.steps.add('volta'); fechar(d.steps); if (d.src === null) d.src = 'direto / sem origem'; });
+  const cohort = todos.filter(d => d.first >= corte), ids = new Set(cohort.map(d => d.id));
+  const funnel = {}; STEP_ORDER.forEach(s => funnel[s] = cohort.filter(d => d.steps.has(s)).length);
+  const rec = new Map(), tel = new Map(), esp = new Map();
+  for (const e of evs) {
+    const t = Date.parse(e.created_at); if (Number.isNaN(t) || t < corte) continue;
+    const ex = extraDe(e);
+    if (USO[e.event]) rec.set(e.event, (rec.get(e.event) || 0) + 1);
+    if (e.event === 'pet_criado') { const k = ESP[ex.especie] || curto(ex.especie || 'sem dado', 20); esp.set(k, (esp.get(k) || 0) + 1); }
+    if (e.event === 'screen_view') { const n = String(ex.screen || '?'); let r = tel.get(n); if (!r) { r = { v: 0, d: new Set() }; tel.set(n, r); } r.v++; r.d.add(e.device); }
+  }
+  const br = cohort.filter(d => d.tz && FUSOS_BR.has(d.tz)).length, sem = cohort.filter(d => !d.tz).length;
+  return { cohort, funnel, rec: [...rec.entries()].sort((a, b) => b[1] - a[1]), esp: [...esp.entries()].sort((a, b) => b[1] - a[1]),
+    screens: [...tel.entries()].map(([n, r]) => [n, r.v, r.d.size]).sort((a, b) => b[1] - a[1]),
+    sources: contarPor(cohort, d => d.src), regions: contarPor(cohort, d => regiaoLabel(d.tz)), resumo: { br, ext: cohort.length - br - sem, sem } };
+}
+function porDia(all, hidden, agora) {
+  const dias = []; for (let i = 13; i >= 0; i--) dias.push(diaBR(agora - i * 86400000));
+  const m = new Map(dias.map(d => [d, new Set()]));
+  for (const e of all) { if (!e || !e.device || hidden.has(e.device)) continue; const t = Date.parse(e.created_at); if (Number.isNaN(t)) continue; const d = diaBR(t); if (e.event === 'session_start' && m.has(d)) m.get(d).add(e.device); }
+  return dias.map(d => [d, m.get(d).size]);
+}
+async function buscarTudo(url, key) {
+  let all = [], off = 0;
+  for (;;) {
+    const r = await fetch(`${url.replace(/\/$/, '')}/rest/v1/events?select=device,event,extra,created_at&order=created_at.asc,id.asc&limit=1000&offset=${off}`, { headers: { apikey: key, Authorization: `Bearer ${key}` } });
+    if (!r.ok) throw new Error('Falha ao ler (' + r.status + '). Confira a URL e a service_role key.');
+    const rows = await r.json(); all = all.concat(rows);
+    if (rows.length < 1000 || (off += 1000) > 500000) break;
+  }
+  return all;
+}
+let EVENTS = [];
+const HK = 'baba-dash-hidden';
+const lerOc = () => { try { return new Set(JSON.parse(localStorage.getItem(HK) || '[]')); } catch (e) { return new Set(); } };
+const salvarOc = s => { try { localStorage.setItem(HK, JSON.stringify([...s])); } catch (e) {} };
+const corteMs = (p, a) => p === '24h' ? a - 864e5 : p === '7d' ? a - 7 * 864e5 : p === '30d' ? a - 30 * 864e5 : 0;
+const linhaVazia = (n, t) => `<tr><td colspan="${n}" style="color:#8a95ab">${t}</td></tr>`;
+
+function desenhar() {
+  const periodo = document.getElementById('periodo').value, hidden = lerOc(), agora = Date.now();
+  const r = analisar(EVENTS, hidden, corteMs(periodo, agora)), n = r.cohort.length, f = r.funnel;
+  document.getElementById('cards').innerHTML = `
+    <div class="card"><div class="label">Visitantes novos</div><div class="value teal">${n}</div></div>
+    <div class="card"><div class="label">Cadastraram pet</div><div class="value green">${f.pet}</div><div class="small">${pct(f.pet, n)}% dos visitantes</div></div>
+    <div class="card"><div class="label">Usaram um recurso</div><div class="value">${f.uso}</div><div class="small">${pct(f.uso, n)}%</div></div>
+    <div class="card"><div class="label">Voltaram em outro dia</div><div class="value">${f.volta}</div><div class="small">${pct(f.volta, n)}%</div></div>
+    <div class="card"><div class="label">Instalaram</div><div class="value">${f.install}</div><div class="small">${pct(f.install, n)}%</div></div>`;
+  document.getElementById('funil').innerHTML = STEP_ORDER.map(s => `<div class="frow"><span>${esc(STEP_LABEL[s])}</span><b>${f[s]} <span style="color:#8a95ab;font-weight:400">(${pct(f[s], n)}%)</span></b><div class="fbar"><i style="width:${pct(f[s], n)}%"></i></div></div>`).join('');
+  const pd = porDia(EVENTS, hidden, agora), mx = Math.max(1, ...pd.map(x => x[1]));
+  document.getElementById('grafdias').innerHTML = `<div class="dias">${pd.map(x => `<div style="height:${Math.max(2, x[1] / mx * 100)}%"><span>${x[1] || ''}</span></div>`).join('')}</div><div class="dias-l">${pd.map(x => `<span>${esc(x[0].slice(8))}</span>`).join('')}</div>`;
+  const tr = r.rec.reduce((s, x) => s + x[1], 0) || 1;
+  document.getElementById('recursos').innerHTML = r.rec.length ? r.rec.map(([k, v]) => `<div class="frow"><span>${esc(USO[k])}</span><b>${v}</b><div class="fbar"><i style="width:${pct(v, r.rec[0][1])}%"></i></div></div>`).join('') : '<div class="note">Sem dados no período</div>';
+  document.querySelector('#tbl-esp tbody').innerHTML = r.esp.map(x => `<tr><td>${esc(x[0])}</td><td>${x[1]}</td></tr>`).join('') || linhaVazia(2, 'Sem dados');
+  document.querySelector('#tbl-telas tbody').innerHTML = r.screens.slice(0, 20).map(x => `<tr><td>${esc(TELA[x[0]] || curto(x[0], 30))}</td><td>${x[1]}</td><td>${x[2]}</td></tr>`).join('') || linhaVazia(3, 'Sem dados ainda');
+  document.querySelector('#tbl-origem tbody').innerHTML = r.sources.slice(0, 12).map(x => `<tr><td>${esc(curto(x[0], 50))}</td><td>${x[1]}</td></tr>`).join('') || linhaVazia(2, 'Sem dados');
+  document.getElementById('resumo-regiao').textContent = `Brasil: ${r.resumo.br} · Exterior: ${r.resumo.ext} · Sem dado: ${r.resumo.sem}`;
+  document.querySelector('#tbl-regiao tbody').innerHTML = r.regions.slice(0, 12).map(x => `<tr><td>${esc(curto(x[0], 50))}</td><td>${x[1]}</td></tr>`).join('') || linhaVazia(2, 'Sem dados');
+  document.querySelector('#tbl-dev tbody').innerHTML = r.cohort.slice().sort((a, b) => b.last - a.last).slice(0, 60).map(d => {
+    let alto = 'visit'; STEP_ORDER.forEach(s => { if (d.steps.has(s) && s !== 'install') alto = s; });
+    return `<tr><td>${esc(String(d.id).slice(0, 6))}</td><td>${esc(fmtHora(d.first))}</td><td>${d.sessions}</td><td>${esc(STEP_CURTO[alto])}</td><td>${d.steps.has('install') ? 'sim' : 'não'}</td><td>${esc(curto(d.src, 28))}</td><td><button class="mini" data-hide="${esc(d.id)}">ocultar</button></td></tr>`;
+  }).join('') || linhaVazia(7, 'Sem aparelhos no período');
+  document.getElementById('ocultos').innerHTML = hidden.size ? `${hidden.size} aparelho(s) oculto(s). <a href="#" id="mostrar-ocultos">Mostrar todos</a>` : 'Dica: use "ocultar" nos seus próprios aparelhos para não contarem como visitantes.';
+}
+async function carregar() {
+  const raw = localStorage.getItem('baba-dash-cfg'); if (!raw) return;
+  let cfg; try { cfg = JSON.parse(raw); } catch (e) { localStorage.removeItem('baba-dash-cfg'); return; }
+  document.getElementById('setup').style.display = 'none'; document.getElementById('app').style.display = 'block';
+  const msg = document.getElementById('atualizado'); msg.textContent = 'carregando…';
+  try { EVENTS = await buscarTudo(cfg.url, cfg.key); }
+  catch (e) { document.getElementById('cards').innerHTML = `<div class="card"><div class="label">Erro</div><div class="value" style="font-size:1rem;color:#e06666">${esc(e.message)}</div></div>`; msg.textContent = ''; return; }
+  msg.textContent = 'atualizado ' + fmtHora(Date.now()) + ' · ' + EVENTS.length + ' eventos'; desenhar();
+}
+function salvarConfig() {
+  const url = document.getElementById('in-url').value.trim(), key = document.getElementById('in-key').value.trim();
+  if (url.indexOf('http') !== 0 || !key) { alert('Preencha os dois campos.'); return; }
+  localStorage.setItem('baba-dash-cfg', JSON.stringify({ url, key })); location.reload();
+}
+document.addEventListener('click', ev => {
+  const el = ev.target; if (!el) return;
+  if (el.dataset && el.dataset.hide) { const s = lerOc(); s.add(el.dataset.hide); salvarOc(s); desenhar(); }
+  else if (el.id === 'mostrar-ocultos') { ev.preventDefault(); salvarOc(new Set()); desenhar(); }
+  else if (el.id === 'btn-atualizar') carregar();
+  else if (el.id === 'btn-trocar') { localStorage.removeItem('baba-dash-cfg'); location.reload(); }
+});
+document.getElementById('periodo').addEventListener('change', desenhar);
+carregar();
+</script>
+</body>
+</html>
