@@ -1,7 +1,7 @@
 /* Babapetapp — funciona sem internet.
    Páginas e código: tenta a internet primeiro (assim as atualizações chegam sozinhas) e usa a cópia salva se estiver offline.
    Imagens: usa a cópia salva primeiro. */
-const CACHE = 'babypet-v7';
+const CACHE = 'babypet-v9';
 const BASE = ['./', 'index.html', 'manifest.json', 'biblioteca.json', 'privacidade.html', 'icon-192.png', 'icon-512.png'];
 
 self.addEventListener('install', e => {
