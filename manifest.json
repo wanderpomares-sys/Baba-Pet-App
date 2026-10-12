@@ -1,0 +1,33 @@
+{
+  "id": "./",
+  "name": "Babapetapp",
+  "short_name": "Babapetapp",
+  "description": "Vacinas, ração, peso e gastos do seu pet, de cães e gatos a chinchilas e jabutis, num só lugar.",
+  "lang": "pt-BR",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#E8FAF6",
+  "theme_color": "#14C8C0",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
