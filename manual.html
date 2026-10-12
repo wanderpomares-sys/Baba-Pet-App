@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#14C8C0">
+<title>Manual de uso — Babá Pet App</title>
+<style>
+:root{--bg:#E8FAF6;--card:#fff;--ink:#0B2B33;--ink2:#3C5F66;--tq:#087C78;--line:rgba(20,200,192,.38);--dica:#FFF3C4;--dicaink:#5A4300}
+@media (prefers-color-scheme:dark){:root{--bg:#06171E;--card:#0B2630;--ink:#E8FBF8;--ink2:#9CC6C9;--tq:#14C8C0;--dica:#3A3210;--dicaink:#FFE9A0}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 18px/1.6 ui-rounded,'Nunito',system-ui,-apple-system,'Segoe UI',sans-serif}
+main{max-width:720px;margin:0 auto;padding:20px 16px 56px}
+a{color:var(--tq)}
+.voltar{display:inline-flex;align-items:center;min-height:48px;font-weight:700;text-decoration:none}
+h1{font-size:30px;line-height:1.2;margin:8px 0 4px}
+h2{font-size:23px;margin:0 0 8px;scroll-margin-top:12px}
+h3{font-size:19px;margin:14px 0 4px}
+.sub{color:var(--ink2);margin:0 0 20px}
+section,nav.toc{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:16px 18px;margin:14px 0}
+nav.toc ol{margin:6px 0 0;padding-left:24px}
+nav.toc li{margin:2px 0}
+nav.toc a{display:inline-block;min-height:40px;padding:6px 0;text-decoration:none;font-weight:700}
+p{margin:8px 0}
+ul,ol{margin:8px 0;padding-left:24px}
+li{margin:6px 0}
+.dica{background:var(--dica);color:var(--dicaink);border-radius:14px;padding:10px 14px;margin:12px 0}
+.dica b:first-child{display:block}
+details{border-top:1px solid var(--line);padding:4px 0}
+details:first-of-type{border-top:0}
+summary{cursor:pointer;font-weight:700;min-height:48px;display:flex;align-items:center}
+kbd{font:inherit;font-weight:700;background:rgba(20,200,192,.18);border-radius:8px;padding:1px 8px}
+small{color:var(--ink2)}
+</style>
+</head>
+<body>
+<main>
+<a class="voltar" href="./">‹ Voltar ao Babá Pet App</a>
+<h1>Manual de uso</h1>
+<p class="sub">Babá Pet App, versão 0.14. Passo a passo para cuidar do seu pet.</p>
+
+<nav class="toc" aria-label="Índice">
+<b>O que você encontra aqui</b>
+<ol>
+<li><a href="#o-que-e">O que é o Babá Pet App</a></li>
+<li><a href="#instalar">Instalar no celular</a></li>
+<li><a href="#pet">Cadastrar o seu pet</a></li>
+<li><a href="#inicio">Tela Início</a></li>
+<li><a href="#saude">Saúde: vacinas e plano de saúde</a></li>
+<li><a href="#agenda">Agenda: passeio, treino, banho e eventos</a></li>
+<li><a href="#comida">Comida</a></li>
+<li><a href="#peso">Peso</a></li>
+<li><a href="#gastos">Gastos</a></li>
+<li><a href="#album">Álbuns de fotos e vídeos</a></li>
+<li><a href="#biblioteca">Biblioteca de espécies</a></li>
+<li><a href="#dados">Seus dados: backup e troca de celular</a></li>
+<li><a href="#duvidas">Perguntas frequentes</a></li>
+</ol>
+</nav>
+
+<section id="o-que-e">
+<h2>1. O que é o Babá Pet App</h2>
+<p>É a sua babá digital para pets. Ele ajuda a lembrar de vacinas, ração, peso, gastos, passeios e banhos. Serve para cães, gatos, coelhos, aves, roedores, répteis e outros bichos.</p>
+<p>A Babá, a suricate do app, aparece na tela Início e muda de expressão conforme a situação do seu pet.</p>
+<div class="dica"><b>Importante</b>O app organiza e lembra, mas não substitui o veterinário. Vacinas, remédios e dúvidas de saúde devem ser decididos com ele.</div>
+</section>
+
+<section id="instalar">
+<h2>2. Instalar no celular</h2>
+<p>O app abre pelo navegador e pode ficar como um ícone na tela do celular, como qualquer outro app.</p>
+<h3>Android (Chrome)</h3>
+<ol>
+<li>Abra o endereço do app no Chrome.</li>
+<li>Toque nos três pontinhos no canto de cima.</li>
+<li>Toque em <kbd>Instalar app</kbd> ou <kbd>Adicionar à tela inicial</kbd>.</li>
+</ol>
+<p>Se o navegador oferecer a instalação, o botão <kbd>Instalar o app</kbd> também aparece na aba <kbd>Mais</kbd>.</p>
+<h3>iPhone (Safari)</h3>
+<ol>
+<li>Abra o endereço do app no Safari.</li>
+<li>Toque no botão de compartilhar (quadrado com uma seta).</li>
+<li>Escolha <kbd>Adicionar à Tela de Início</kbd>.</li>
+</ol>
+<div class="dica"><b>Dica</b>Em <kbd>Mais</kbd> há o botão <kbd>Verificar instalação</kbd>. Ele confere se o ícone do app está certo.</div>
+<p>Depois de instalado, o app abre mesmo sem internet. As atualizações chegam sozinhas quando houver conexão.</p>
+</section>
+
+<section id="pet">
+<h2>3. Cadastrar o seu pet</h2>
+<ol>
+<li>Na primeira vez, toque em <kbd>Cadastrar meu pet</kbd>. Depois, use <kbd>+ Pet</kbd> no alto da tela.</li>
+<li>Preencha o nome, a espécie, a raça ou o tipo, o sexo e a data de nascimento.</li>
+<li>Se quiser, escolha uma foto. Ela aparece numa moldura redonda antes de salvar.</li>
+<li>Toque em <kbd>Cadastrar</kbd>.</li>
+</ol>
+<div class="dica"><b>Dica</b>Preencha a raça ou o tipo (por exemplo, chinchila, calopsita ou jabuti). O guia da Biblioteca usa essa informação.</div>
+<p><b>Mais de um pet:</b> cada pet aparece como um botão no alto. Toque no nome para trocar. As telas mostram sempre os dados do pet escolhido.</p>
+<p><b>Editar ou excluir:</b> toque de novo no pet que já está escolhido (o destacado) no alto para abrir a edição. Em <kbd>Excluir</kbd>, o app pede confirmação, e apaga também as vacinas, o peso, a ração, os gastos, a agenda e o plano de saúde dele.</p>
+</section>
+
+<section id="inicio">
+<h2>4. Tela Início</h2>
+<ul>
+<li><b>A Babá</b> dá um recado do dia, como uma vacina que está chegando ou a ração que está acabando.</li>
+<li><b>Quatro quadros</b> mostram o resumo de Saúde, Ração, Peso e Gastos do mês. Toque num quadro para abrir a tela dele.</li>
+<li><b>Dias cuidando:</b> conta quantos dias seguidos você registrou algo.</li>
+<li><b>Agenda:</b> mostra quantos compromissos estão para hoje ou atrasados.</li>
+<li><b>Atalhos</b> para a Biblioteca e para o Álbum.</li>
+<li><b>Registrar agora:</b> botões rápidos para dar ração, anotar o peso e lançar um gasto.</li>
+</ul>
+</section>
+
+<section id="saude">
+<h2>5. Saúde</h2>
+<h3>Vacinas e outros registros</h3>
+<ol>
+<li>Abra a aba <kbd>Saúde</kbd> e toque em <kbd>Adicionar</kbd>.</li>
+<li>Escolha o tipo (vacina, vermífugo, antipulgas, consulta, exame, remédio ou outro) e o nome.</li>
+<li>Informe a data em que foi feito e a data da próxima.</li>
+</ol>
+<p>Cada item mostra uma etiqueta: <b>Em dia</b>, <b>Em 5d</b> (faltam 5 dias), <b>É hoje</b> ou <b>Atrasada 3d</b> (3 dias de atraso). Para corrigir, toque no item.</p>
+<p>Para cães e gatos, o app trabalha com vacinas e vermífugos de rotina. Para outros bichos, ele mostra consultas, exames e tratamentos, porque o calendário de vacinas deles é definido pelo veterinário.</p>
+<div class="dica"><b>Atenção</b>A data de “Feito em” não pode ser no futuro. Para agendar algo, use “Próxima data”.</div>
+<h3>Plano de saúde do pet</h3>
+<ol>
+<li>No alto da aba Saúde, toque em <kbd>Cadastrar plano de saúde</kbd>.</li>
+<li>Informe a operadora e, se quiser, o nome do plano, a carteirinha, a mensalidade, o dia do vencimento, a carência, a renovação e o telefone.</li>
+<li>Use <kbd>Registrar uso</kbd> a cada consulta ou exame: o custo total e quanto o plano pagou.</li>
+</ol>
+<p>O app mostra quanto o plano cobriu no ano e quanto você pagou. Ele também avisa na Agenda quando a mensalidade, a renovação ou o fim da carência estiverem chegando. O botão <kbd>Ligar para o plano</kbd> aparece quando você informa o telefone.</p>
+</section>
+
+<section id="agenda">
+<h2>6. Agenda</h2>
+<p>Use a aba <kbd>Agenda</kbd> para passeio, treino, banho, tosa, consulta, remédio, concurso e evento.</p>
+<h3>Criar um compromisso</h3>
+<ol>
+<li>Toque num tipo no alto (por exemplo, Passeio) ou em <kbd>Novo compromisso</kbd>.</li>
+<li>Escolha a data e, se quiser, a hora, o local e anotações.</li>
+<li>Em <kbd>Repetir</kbd>, escolha todo dia, toda semana, a cada 15 dias, todo mês ou todo ano.</li>
+<li>Para concursos e eventos, preencha também <kbd>Inscrições até</kbd>.</li>
+</ol>
+<h3>Marcar como feito</h3>
+<p>Toque no botão <kbd>✔ Feito</kbd>. Se o compromisso repete, o app já marca a próxima data. Se não repete, ele vai para “Feitos recentemente”.</p>
+<p>Os compromissos ficam em grupos: Atrasados, Hoje, Próximos 7 dias e Mais adiante. As vacinas que vencem em até 30 dias também aparecem na Agenda.</p>
+<h3>Receber avisos no celular</h3>
+<p>O app não envia notificações sozinho. Para ser avisado, toque em <kbd>Levar para o calendário do celular</kbd>. O app baixa um arquivo; abra-o e o calendário do celular adiciona tudo, com repetição e um lembrete 30 minutos antes de cada compromisso. Faça de novo sempre que criar compromissos novos.</p>
+<h3>Eventos pet</h3>
+<p>Abaixo dos compromissos há uma lista de exposições, concursos, feiras de adoção e encontros. Por padrão ela mostra os eventos do pet escolhido; toque em <kbd>Todos os pets</kbd> para ver todos, e use o filtro de estado. <kbd>Guardar na agenda</kbd> copia o evento para a agenda do pet.</p>
+<div class="dica"><b>Atenção</b>A lista é montada e revisada à mão. Confira data, local e valores no site oficial do evento antes de ir.</div>
+</section>
+
+<section id="comida">
+<h2>7. Comida</h2>
+<ol>
+<li>Na primeira vez, toque em <kbd>Configurar ração</kbd>. Informe o produto, a marca, o total por dia (em gramas), as refeições por dia, o tamanho e o preço do pacote e quando ele foi aberto.</li>
+<li>O app calcula quantos dias faltam para a ração acabar.</li>
+<li>Cada vez que alimentar, toque em <kbd>Dar ração</kbd>. A refeição fica registrada em “Últimas refeições”.</li>
+<li>Quando abrir um pacote novo, toque em <kbd>Abri um novo pacote</kbd>.</li>
+</ol>
+<p>Para mudar a dose ou o pacote, use <kbd>Editar plano</kbd>. Para apagar uma refeição registrada por engano, toque no lixo ao lado dela.</p>
+</section>
+
+<section id="peso">
+<h2>8. Peso</h2>
+<p>A aba Peso fica em <kbd>Mais</kbd> › <kbd>Peso</kbd>, e também no quadro Peso da tela Início.</p>
+<ol>
+<li>Toque em <kbd>Registrar peso</kbd> e informe a data e o peso em quilos.</li>
+<li>A partir de duas pesagens, o app mostra um gráfico da evolução.</li>
+<li>O histórico fica logo abaixo; dá para apagar uma pesagem errada.</li>
+</ol>
+</section>
+
+<section id="gastos">
+<h2>9. Gastos</h2>
+<ol>
+<li>Toque em <kbd>Novo gasto</kbd>, escolha a categoria (ração, consulta, vacina, banho e tosa, treino e outras), o valor e a data.</li>
+<li>O app mostra o total do mês e quanto foi para cada categoria.</li>
+<li>Use as setas do mês para ver meses anteriores.</li>
+<li>Para corrigir ou apagar, toque no lançamento.</li>
+</ol>
+</section>
+
+<section id="album">
+<h2>10. Álbuns de fotos e vídeos</h2>
+<p>Abra pelo atalho na tela Início ou em <kbd>Mais</kbd> › <kbd>Álbum</kbd>.</p>
+<ul>
+<li><b>Dois álbuns:</b> “Momentos fofos” e “Concursos e eventos”. Troque pelos botões no alto.</li>
+<li><b>Fotos e vídeos:</b> use as abas para alternar e <kbd>Adicionar fotos</kbd> ou <kbd>Adicionar vídeos</kbd> para incluir. Vídeos podem ter até 80 MB.</li>
+<li><b>Três jeitos de ver:</b> Grade, Molduras (como fotos reveladas) e Carrossel (deslize para o lado). O app lembra a sua escolha.</li>
+<li><b>Ao abrir uma foto ou vídeo:</b> escreva uma legenda, marque como favorito, compartilhe, baixe ou apague. Deslize para o lado para ir ao próximo.</li>
+</ul>
+<div class="dica"><b>Importante</b>As fotos e os vídeos ficam só no seu aparelho. Para não perder, faça o backup completo (veja a seção 12).</div>
+</section>
+
+<section id="biblioteca">
+<h2>11. Biblioteca de espécies</h2>
+<p>Abra pelo atalho no Início ou em <kbd>Mais</kbd>. Ela traz um guia de cuidados, alimentos permitidos e alimentos perigosos para várias espécies.</p>
+<ul>
+<li>O guia tem quase 80 animais e raças: cães (pastor alemão, doberman, rottweiler, shih tzu, golden, labrador, poodle e outras), gatos, aves, roedores, répteis e peixes de água doce (beta, cascudo, paulistinha, acará-bandeira, limpa-fundo e outros) e de água salgada (peixe-palhaço, dori, tang e outros).</li>
+<li>Toque no grupo (Cães, Gatos, Aves…) e escolha o animal ou a raça na lista. Se o cadastro do pet tiver a raça, o app abre o guia certo sozinho.</li>
+<li>Use a busca por nome para achar o animal. Se ele não estiver na lista, o app procura na Wikipédia.</li>
+<li>Use a verificação de alimentos para saber se algo faz mal ao seu pet.</li>
+</ul>
+<div class="dica"><b>Atenção</b>Os guias são informativos e ainda estão em revisão por veterinário. Na dúvida, procure um veterinário, em especial para animais silvestres e exóticos.</div>
+</section>
+
+<section id="dados">
+<h2>12. Seus dados: backup e troca de celular</h2>
+<p>O app não tem cadastro nem nuvem. Tudo fica no seu aparelho. Por isso, faça backup de vez em quando.</p>
+<h3>Fazer o backup</h3>
+<p>Em <kbd>Mais</kbd> › <kbd>Seus dados</kbd>:</p>
+<ul>
+<li><b>Backup completo (com álbum):</b> gera um arquivo <kbd>.zip</kbd> com tudo, inclusive as fotos e os vídeos. Pode ser grande.</li>
+<li><b>Só dados (leve):</b> gera um arquivo <kbd>.json</kbd> sem as fotos e os vídeos.</li>
+</ul>
+<p>O arquivo vai para a pasta de downloads. Guarde uma cópia no e-mail, no Drive ou no computador.</p>
+<h3>Restaurar ou trocar de celular</h3>
+<ol>
+<li>Instale o app no celular novo.</li>
+<li>Passe o arquivo de backup para ele.</li>
+<li>Em <kbd>Mais</kbd>, toque em <kbd>Importar backup</kbd> e escolha o arquivo.</li>
+<li>Confirme. O app mostra quantos pets, registros, fotos e vídeos vai trazer.</li>
+</ol>
+<div class="dica"><b>Atenção</b>Importar substitui os dados do aparelho. O app guarda uma cópia de segurança do que havia antes.</div>
+<h3>Backup no Google Drive (quando disponível)</h3>
+<p>Se o cartão <kbd>Backup no Google Drive</kbd> aparecer em Mais, toque em <kbd>Fazer login com o Google</kbd>, aceite a permissão e use <kbd>Fazer backup agora</kbd>. O backup completo vai para uma pasta escondida do seu próprio Drive. No celular novo, entre com a mesma conta e toque em <kbd>Restaurar do Drive</kbd>. O backup é manual: faça de novo sempre que quiser guardar as novidades.</p>
+<h3>Outros itens da aba Mais</h3>
+<ul>
+<li><b>Privacidade:</b> abre a política de privacidade.</li>
+<li><b>Demonstração:</b> abre o app com um pet de exemplo (Thor), sem mexer nos seus dados.</li>
+<li><b>Apagar todos os dados:</b> apaga tudo deste aparelho. Não dá para desfazer.</li>
+</ul>
+</section>
+
+<section id="duvidas">
+<h2>13. Perguntas frequentes</h2>
+<details><summary>Preciso de internet?</summary><p>Não para o uso do dia a dia. Só a busca de outros animais, a lista de eventos atualizada e os links externos precisam de internet.</p></details>
+<details><summary>Meus dados vão para algum lugar?</summary><p>Não. Ficam só no seu aparelho. Veja a política de privacidade em <a href="privacidade.html">privacidade.html</a>.</p></details>
+<details><summary>Perdi os dados. E agora?</summary><p>Se você tem um arquivo de backup, use <kbd>Importar backup</kbd>. Sem backup, não dá para recuperar, porque não há cópia na nuvem. Limpar os dados do navegador, desinstalar o app ou trocar de celular apaga tudo.</p></details>
+<details><summary>O ícone ou o nome antigo continua na tela do celular.</summary><p>Quem instalou antes da troca de nome precisa remover o atalho e instalar de novo pelo navegador. Os dados continuam salvos se você não limpar os dados do navegador, mas faça um backup antes, por garantia.</p></details>
+<details><summary>Como atualizo o app?</summary><p>Ele se atualiza sozinho quando abre com internet. Se algo parecer antigo, feche o app por completo e abra de novo.</p></details>
+<details><summary>Os lembretes não tocam sozinhos.</summary><p>Isso é esperado: o app não envia notificações. Use <kbd>Levar para o calendário do celular</kbd> na Agenda para receber avisos do próprio calendário.</p></details>
+<details><summary>A foto ou o vídeo não entra no álbum.</summary><p>Vídeos passam de 80 MB ou o celular está sem espaço. Libere espaço ou escolha um vídeo menor. O álbum precisa de um navegador atual; em navegadores muito antigos ele não abre.</p></details>
+<details><summary>Meu bicho é exótico e não aparece na lista.</summary><p>Cadastre com a espécie mais próxima, ou “Outro”, e escreva o tipo no campo de raça. O app aceita qualquer bicho. A Biblioteca pode procurar o animal pelo nome.</p></details>
+<details><summary>Como falo com o desenvolvedor?</summary><p>Veja o contato na <a href="privacidade.html">política de privacidade</a>.</p></details>
+</section>
+
+<p><small>Babá Pet App, versão 0.14. Manual atualizado em 12/10/2026.</small></p>
+</main>
+</body>
+</html>
