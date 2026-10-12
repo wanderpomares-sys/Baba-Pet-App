@@ -1094,7 +1094,7 @@ const IMG = {"cuidadora": "data:image/webp;base64,UklGRgyVAABXRUJQVlA4WAoAAAAQAA
     form.addEventListener('submit', e => {
       e.preventDefault();
       const d = Object.fromEntries(new FormData(form));
-      Promise.resolve().then(() => o.aoSalvar(d, form)).then(() => { fechar(); render(); }).catch(err => { if (!err || err.message !== 'validacao') aviso('Algo deu errado. Tente de novo.'); });
+      Promise.resolve().then(() => o.aoSalvar(d, form)).then(() => { fechar(); render(); }).catch(err => { if (!err || err.message !== 'validacao') aviso(err && /imagem|leitura/.test(err.message || '') ? 'Não consegui ler essa foto. Tente outra imagem (JPG ou PNG) ou salve sem foto.' : 'Algo deu errado. Tente de novo.'); });
     });
     const ex = $('[data-sheet="excluir"]', raiz);
     if (ex) ex.addEventListener('click', () => { if (confirm(o.confirmar || 'Excluir este item?')) { o.excluir(); salvar(); fechar(); render(); } });
@@ -1107,15 +1107,25 @@ const IMG = {"cuidadora": "data:image/webp;base64,UklGRgyVAABXRUJQVlA4WAoAAAAQAA
     const primeiro = $('input,select', form); if (primeiro && !('ontouchstart' in window)) primeiro.focus();
   }
   function reduzir(file, max) {
-    return new Promise((ok, erro) => {
-      const r = new FileReader();
-      r.onload = () => { const img = new Image(); img.onload = () => {
-        const k = Math.min(1, max / Math.max(img.width, img.height)), c = document.createElement('canvas');
-        c.width = Math.round(img.width * k); c.height = Math.round(img.height * k);
-        c.getContext('2d').drawImage(img, 0, 0, c.width, c.height); ok(c.toDataURL('image/jpeg', .82));
-      }; img.onerror = erro; img.src = r.result; };
-      r.onerror = erro; r.readAsDataURL(file);
+    const desenhar = (fonte, w, h) => {
+      const k = Math.min(1, max / Math.max(w, h)), c = document.createElement('canvas');
+      c.width = Math.max(1, Math.round(w * k)); c.height = Math.max(1, Math.round(h * k));
+      c.getContext('2d').drawImage(fonte, 0, 0, c.width, c.height);
+      return c.toDataURL('image/jpeg', .82);
+    };
+    /* 1) createImageBitmap: leve em memória e respeita a rotação da foto. 2) <img> com URL do arquivo. 3) <img> com dataURL. */
+    const viaBitmap = () => window.createImageBitmap
+      ? createImageBitmap(file, { imageOrientation: 'from-image' }).then(bm => { const r = desenhar(bm, bm.width, bm.height); if (bm.close) bm.close(); return r; })
+      : Promise.reject(new Error('sem-bitmap'));
+    const viaImg = src => new Promise((ok, erro) => {
+      const img = new Image();
+      img.onload = () => { try { ok(desenhar(img, img.naturalWidth || img.width, img.naturalHeight || img.height)); } catch (e) { erro(e); } };
+      img.onerror = () => erro(new Error('imagem-ilegivel'));
+      img.src = src;
     });
+    const viaUrl = () => { const u = URL.createObjectURL(file); return viaImg(u).finally(() => URL.revokeObjectURL(u)); };
+    const viaData = () => new Promise((ok, erro) => { const r = new FileReader(); r.onload = () => ok(r.result); r.onerror = () => erro(new Error('leitura')); r.readAsDataURL(file); }).then(viaImg);
+    return viaBitmap().catch(viaUrl).catch(viaData);
   }
   const hora = () => { const d = new Date(); return pad(d.getHours()) + ':' + pad(d.getMinutes()); };
 
