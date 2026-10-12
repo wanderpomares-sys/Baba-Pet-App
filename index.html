@@ -170,6 +170,9 @@ button{font:inherit;color:inherit;cursor:pointer}
 .fld{display:block;margin-bottom:12px}
 .fld span{display:block;font-size:17px;font-weight:700;margin-bottom:4px;color:var(--ink2)}
 .fld input,.fld select{width:100%;min-height:58px;padding:0 14px;border-radius:16px;border:1px solid var(--line);background:var(--campo);color:var(--ink);font:inherit;font-size:19px}
+.moldura{width:148px;height:148px;margin:4px auto 12px;padding:6px;border-radius:50%;background:linear-gradient(135deg,var(--brand,#19c9c0),#ffd36b);box-shadow:0 6px 18px rgba(0,0,0,.28)}
+.moldura[hidden]{display:none}
+.moldura img{width:100%;height:100%;object-fit:cover;border-radius:50%;border:3px solid var(--campo);display:block;background:var(--campo)}
 .fld input[type=file]{padding:12px 14px;height:auto}
 .dupla{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px}
 .dupla .fld{min-width:0}
@@ -770,6 +773,7 @@ const IMG = {"cuidadora": "data:image/webp;base64,UklGRgyVAABXRUJQVlA4WAoAAAAQAA
     const v = f.value == null ? '' : f.value, req = f.req ? 'required' : '';
     if (f.type === 'select') return `<label class="fld"><span>${esc(f.label)}</span><select name="${f.name}" ${req}>${f.options.map(([k, t]) => `<option value="${esc(k)}" ${String(k) === String(v) ? 'selected' : ''}>${esc(t)}</option>`).join('')}</select></label>`;
     const modo = f.type === 'num' ? 'type="text" inputmode="decimal"' : `type="${f.type || 'text'}"`;
+    if (f.type === 'file' && f.preview) return `<div class="fld"><span>${esc(f.label)}</span><div class="moldura" ${f.atual ? '' : 'hidden'}><img class="prevfoto" alt="Foto do pet" ${f.atual ? `src="${esc(f.atual)}"` : ''}></div><input name="${f.name}" type="file" accept="image/*"></div>`;
     return `<label class="fld"><span>${esc(f.label)}</span><input name="${f.name}" ${modo} value="${esc(v)}" ${f.ph ? `placeholder="${esc(f.ph)}"` : ''} ${f.type === 'file' ? 'accept="image/*"' : ''} ${req}></label>`;
   }
   function fechar() { $('#sheet-root').innerHTML = ''; fecharVisor(); }
@@ -788,6 +792,12 @@ const IMG = {"cuidadora": "data:image/webp;base64,UklGRgyVAABXRUJQVlA4WAoAAAAQAA
     });
     const ex = $('[data-sheet="excluir"]', raiz);
     if (ex) ex.addEventListener('click', () => { if (confirm(o.confirmar || 'Excluir este item?')) { o.excluir(); salvar(); fechar(); render(); } });
+    const inF = $('input[type=file]', form), mold = $('.moldura', form);
+    if (inF && mold) inF.addEventListener('change', () => {
+      const a = inF.files[0], im = $('img', mold); if (!a) return;
+      if (im.dataset.u) URL.revokeObjectURL(im.dataset.u);
+      im.dataset.u = URL.createObjectURL(a); im.src = im.dataset.u; mold.hidden = false;
+    });
     const primeiro = $('input,select', form); if (primeiro && !('ontouchstart' in window)) primeiro.focus();
   }
   function reduzir(file, max) {
@@ -963,7 +973,7 @@ const IMG = {"cuidadora": "data:image/webp;base64,UklGRgyVAABXRUJQVlA4WAoAAAAQAA
       { name: 'especie', label: 'Espécie', type: 'select', options: ESPECIES, value: p ? p.especie : 'cao' },
       { name: 'raca', label: 'Raça ou tipo (importante para o guia)', value: p && p.raca, ph: 'Ex.: chinchila, calopsita, jabuti' },
       [{ name: 'sexo', label: 'Sexo', type: 'select', options: [['', 'Não informado'], ['macho', 'Macho'], ['femea', 'Fêmea']], value: p && p.sexo }, { name: 'nasc', label: 'Nascimento', type: 'date', value: p && p.nasc }],
-      { name: 'foto', label: p && p.foto ? 'Trocar foto' : 'Foto (opcional)', type: 'file' }],
+      { name: 'foto', label: p && p.foto ? 'Trocar foto' : 'Foto (opcional)', type: 'file', preview: true, atual: p && p.foto }],
       confirmar: p ? 'Isso apaga também vacinas, peso, ração e gastos de ' + p.nome + '. Continuar?' : '',
       excluir: p && (() => {
         S.pets = S.pets.filter(x => x.id !== p.id);
