@@ -1,7 +1,7 @@
 {
   "id": "./",
-  "name": "Babapetapp",
-  "short_name": "Babapetapp",
+  "name": "Babá do Pet",
+  "short_name": "Babá do Pet",
   "description": "Vacinas, ração, peso e gastos do seu pet, de cães e gatos a chinchilas e jabutis, num só lugar.",
   "lang": "pt-BR",
   "start_url": "./",

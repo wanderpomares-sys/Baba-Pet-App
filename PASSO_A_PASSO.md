@@ -1,4 +1,4 @@
-# Painel de uso do Babá Pet App
+# Painel de uso da Babá do Pet
 
 1. Crie um projeto grátis em supabase.com.
 2. SQL Editor → New query → cole `supabase_eventos.sql` → Run.
