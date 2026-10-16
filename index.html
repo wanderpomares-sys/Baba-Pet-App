@@ -1102,6 +1102,9 @@ const IMG = {"cuidadora": "data:image/webp;base64,UklGRgyVAABXRUJQVlA4WAoAAAAQAA
     <div class="glass card" id="c-priv">${cardTit('🛡️', 'Privacidade')}
       <p class="peq" style="margin:4px 0 12px">Sem cadastro e sem anúncios. Os dados do seu pet ficam só neste aparelho.</p>
       <a class="ghost full" href="privacidade.html" target="_blank" rel="noopener">Ler a política de privacidade</a></div>
+    <div class="glass card">${cardTit('🔄', 'Atualização do app')}
+      <p class="peq" style="margin:4px 0 12px">O app se atualiza sozinho quando há internet. Se quiser conferir agora, toque abaixo. Seus dados não são apagados.</p>
+      <button class="ghost full" data-act="verupd">Verificar atualização</button></div>
     <div class="glass card">${cardTit('✅', 'Verificar instalação')}
       <p class="peq" style="margin:4px 0 12px">Confere se o ícone e o manifesto do app estão no site.</p>
       <button class="ghost full" data-act="diagnostico">Verificar agora</button><div id="diag" style="margin-top:8px"></div></div>
@@ -1188,7 +1191,7 @@ const IMG = {"cuidadora": "data:image/webp;base64,UklGRgyVAABXRUJQVlA4WAoAAAAQAA
      NÃO é conta na nuvem, NÃO recupera por e-mail e NÃO criptografa os dados guardados:
      serve para outras pessoas que peguem o celular não abrirem o app. A biometria usa o
      desbloqueio do próprio aparelho (WebAuthn) apenas para liberar a tela. */
-  const APP_V = '0.27';
+  const APP_V = '0.28';
   const LOCK_KEY = 'babypet.lock', LOCK_F = 'babypet.lock.f', LOCK_REL = 2 * 60000;
   let lockAberto = false, lockModo = 'entrar', lockOcultoEm = 0, bioOk = false;
   const lockCfg = () => { try { const c = JSON.parse(localStorage.getItem(LOCK_KEY) || 'null'); return c && c.salt && c.hash ? c : null; } catch (e) { return null; } };
@@ -2229,6 +2232,18 @@ const IMG = {"cuidadora": "data:image/webp;base64,UklGRgyVAABXRUJQVlA4WAoAAAAQAA
     },
     jogover() { jogoVer = !jogoVer; render(); },
     jogosair() { jogoParar(); jogoEst = null; jogoVer = false; jogoLimpaUrl(); render(); window.scrollTo(0, 0); },
+    async verupd() {
+      if (!navigator.onLine) { aviso('Sem internet agora. Tente de novo quando conectar.'); return; }
+      aviso('Procurando versão nova…', 2000);
+      try {
+        const r = await fetch(new URL('index.html', location.href).pathname + '?t=' + Date.now(), { cache: 'no-store' });
+        const m = r.ok && /const APP_V = '([0-9.]+)'/.exec(await r.text());
+        if (!m) { aviso('Não consegui verificar agora. Tente de novo mais tarde.'); return; }
+        if (m[1] === APP_V) { aviso('Você já está na versão mais recente (' + APP_V + ').', 4000); return; }
+        try { sessionStorage.removeItem('babypet.reload'); } catch (e) {}
+        recarregarNovo(m[1]);
+      } catch (e) { aviso('Não consegui verificar agora. Tente de novo mais tarde.'); }
+    },
     jogoir() { fechar(); acoes.tab('jogo'); },
     jogodepois() { fechar(); },
   });
