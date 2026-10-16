@@ -1191,7 +1191,7 @@ const IMG = {"cuidadora": "data:image/webp;base64,UklGRgyVAABXRUJQVlA4WAoAAAAQAA
      NÃO é conta na nuvem, NÃO recupera por e-mail e NÃO criptografa os dados guardados:
      serve para outras pessoas que peguem o celular não abrirem o app. A biometria usa o
      desbloqueio do próprio aparelho (WebAuthn) apenas para liberar a tela. */
-  const APP_V = '0.28';
+  const APP_V = '0.29';
   const LOCK_KEY = 'babypet.lock', LOCK_F = 'babypet.lock.f', LOCK_REL = 2 * 60000;
   let lockAberto = false, lockModo = 'entrar', lockOcultoEm = 0, bioOk = false;
   const lockCfg = () => { try { const c = JSON.parse(localStorage.getItem(LOCK_KEY) || 'null'); return c && c.salt && c.hash ? c : null; } catch (e) { return null; } };
@@ -2141,28 +2141,30 @@ const IMG = {"cuidadora": "data:image/webp;base64,UklGRgyVAABXRUJQVlA4WAoAAAAQAA
   const jogoGravar = j => { try { localStorage.setItem(JOGO_KEY, JSON.stringify(j)); } catch (e) {} };
   let jogoAlbum = [], jogoAlbumPet = null, jogoSel = null, jogoEst = null, jogoTimer = null, jogoVer = false, jogoUrl = null;
   const jogoTempo = ms => { const s = Math.floor(ms / 1000); return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); };
+  let jogoProm = null, jogoUlt = '';
   function jogoCarregar(p) {
-    if (jogoAlbumPet === p.id) return;
+    if (jogoAlbumPet === p.id && jogoProm) return jogoProm;
     jogoAlbumPet = p.id;
-    midiaListar(p.id).then(l => {
-      jogoAlbum = (l || []).filter(m => m.tipo === 'foto' && m.blob && m.thumb).sort((a, b) => b.criado - a.criado).slice(0, 18);
-      if (tab === 'jogo' && !jogoEst) render();
+    jogoProm = midiaListar(p.id).then(l => {
+      jogoAlbum = (l || []).filter(m => m.tipo === 'foto' && m.blob).sort((a, b) => b.criado - a.criado).slice(0, 40);
     }).catch(() => { jogoAlbum = []; });
+    return jogoProm;
+  }
+  function jogoSorteio() {
+    const lib = JOGO_BICHOS.map(([k]) => ({ t: 'bib', k })), alb = jogoAlbum.map(m => ({ t: 'foto', k: m.id }));
+    const usaAlbum = alb.length && Math.random() < 0.5;
+    let pool = (usaAlbum ? alb : lib).filter(x => x.t + x.k !== jogoUlt);
+    if (!pool.length) pool = usaAlbum ? alb : lib;
+    return pool[Math.floor(Math.random() * pool.length)];
   }
   function telaJogo(p) {
     if (jogoEst) return telaJogoTab(p);
     jogoCarregar(p);
-    if (!jogoSel) jogoSel = { t: 'bib', k: JOGO_BICHOS[Math.floor(Math.random() * JOGO_BICHOS.length)][0] };
     const rec = jogoLer().best || {};
-    const sel = (t, k) => jogoSel.t === t && jogoSel.k === k;
-    const fotos = jogoAlbum.map(m => `<button class="jt${sel('foto', m.id) ? ' on' : ''}" data-act="jogoimg:foto:${esc(m.id)}" aria-pressed="${sel('foto', m.id)}" aria-label="Foto do álbum"><img src="${esc(m.thumb)}" alt=""></button>`).join('');
-    const bichos = JOGO_BICHOS.map(([k, n]) => `<button class="jt${sel('bib', k) ? ' on' : ''}" data-act="jogoimg:bib:${k}" aria-pressed="${sel('bib', k)}" aria-label="${n}"><img src="jogo/${k}.webp" alt="" loading="lazy"></button>`).join('');
     return `<div style="display:flex;align-items:center;gap:10px;margin-bottom:6px"><button class="ghost" data-act="voltar" aria-label="Voltar">‹ Voltar</button></div>
     <h1 style="margin:6px 0 0">Quebra-cabeça</h1>
     <p class="peq" style="margin:2px 0 12px">Toque em duas peças para trocá-las de lugar e monte a imagem.</p>
-    <div class="glass card">${cardTit('📸', 'Fotos ' + doA(p) + ' ' + esc(p.nome))}
-      ${fotos ? `<div class="jgrade">${fotos}</div>` : `<p class="peq" style="margin-top:4px">${jogoAlbumPet === p.id ? 'Ainda não há fotos no álbum. Adicione algumas em Mais › Álbum para jogar com elas.' : 'Carregando…'}</p>`}</div>
-    <div class="glass card" style="margin-top:12px">${cardTit('🦎', 'Bichinhos exóticos')}<div class="jgrade">${bichos}</div></div>
+    <div class="glass card" style="text-align:center"><img src="${sur('pensando')}" alt="" style="width:96px;height:96px;object-fit:contain"><h3 style="margin:4px 0">A imagem é surpresa!</h3><p class="peq">Pode ser uma foto ${doA(p)} ${esc(p.nome)} ou um bichinho exótico. Você só descobre montando.</p></div>
     <h2>Escolha o nível</h2>
     <div class="jniveis">${[4, 6, 9].map(n => `<button class="btn sm" data-act="jogoiniciar:${n}">${JOGO_NIVEIS[n]}<small style="display:block;font-size:13px;font-weight:500">${n}×${n}${rec[n] ? ' · 🏆 ' + rec[n].m + ' jog.' : ''}</small></button>`).join('')}</div>`;
   }
@@ -2179,8 +2181,8 @@ const IMG = {"cuidadora": "data:image/webp;base64,UklGRgyVAABXRUJQVlA4WAoAAAAQAA
     <div class="jinfo"><span>🔁 <b>${g.mov}</b> jogadas</span><span>⏱️ <b id="jtempo">${jogoTempo((g.fim || Date.now()) - g.t0)}</b></span>${rec ? `<span>🏆 ${rec.m} / ${jogoTempo(rec.t)}</span>` : ''}</div>
     ${corpo}
     ${g.fim ? `<div class="glass card" style="margin-top:14px;text-align:center"><img src="${sur('comemorando')}" alt="" style="width:96px;height:96px;object-fit:contain"><h3 style="margin:4px 0">Você montou!</h3><p class="peq">${g.mov} jogadas em ${jogoTempo(g.fim - g.t0)}${g.novoRec ? ' · 🏆 novo recorde!' : ''}</p>
-      <div class="acoes" style="justify-content:center"><button class="btn sm" data-act="jogoiniciar:${N}">Jogar de novo</button><button class="ghost" data-act="jogosair">Outra imagem</button></div></div>`
-    : `<div class="acoes" style="margin-top:14px;justify-content:center"><button class="ghost" data-act="jogover" aria-pressed="${jogoVer}">${jogoVer ? '🧩 Voltar ao jogo' : '👁️ Ver imagem'}</button><button class="ghost" data-act="jogoiniciar:${N}">🔀 Embaralhar</button></div>`}`;
+      <div class="acoes" style="justify-content:center"><button class="btn sm" data-act="jogoiniciar:${N}">Jogar de novo</button><button class="ghost" data-act="jogosair">Mudar nível</button></div></div>`
+    : `<div class="acoes" style="margin-top:14px;justify-content:center"><button class="ghost" data-act="jogover" aria-pressed="${jogoVer}">${jogoVer ? '🧩 Voltar ao jogo' : '👁️ Ver imagem'}</button><button class="ghost" data-act="jogoiniciar:${N}:same">🔀 Embaralhar</button></div>`}`;
   }
   function jogoParar() { if (jogoTimer) { clearInterval(jogoTimer); jogoTimer = null; } }
   function jogoLimpaUrl() { if (jogoUrl) { URL.revokeObjectURL(jogoUrl); jogoUrl = null; } }
@@ -2205,9 +2207,11 @@ const IMG = {"cuidadora": "data:image/webp;base64,UklGRgyVAABXRUJQVlA4WAoAAAAQAA
     return perm;
   }
   Object.assign(acoes, {
-    jogoimg(a) { const i = a.indexOf(':'); jogoSel = { t: a.slice(0, i), k: a.slice(i + 1) }; render(); },
     async jogoiniciar(a) {
-      const n = Number(a) || 4; if (!jogoSel) return;
+      const mesma = /:same$/.test(a || ''), n = Number(a) || 4, p0 = petAtivo();
+      if (p0) await jogoCarregar(p0);
+      if (!mesma || !jogoSel) jogoSel = jogoSorteio();
+      jogoUlt = jogoSel.t + jogoSel.k;
       let url; try { url = await jogoFonte(); } catch (e) { aviso('Não consegui abrir essa foto. Tente outra.'); return; }
       jogoParar(); jogoVer = false;
       jogoEst = { n, url, perm: jogoEmbaralhar(n), sel: -1, mov: 0, t0: Date.now(), fim: 0 };
@@ -2261,7 +2265,7 @@ const IMG = {"cuidadora": "data:image/webp;base64,UklGRgyVAABXRUJQVlA4WAoAAAAQAA
   }
   function jogoCartaoInicio() {
     const j = jogoLer();
-    return `<button class="item" style="margin-top:12px" data-act="tab:jogo"><div class="ic">🧩</div><div class="tx"><b>Quebra-cabeça ${j.visto ? '' : '<span class="novo">Novo!</span>'}</b><small>Monte as fotos do álbum e bichinhos exóticos</small></div><span class="dir">›</span></button>`;
+    return `<button class="item" style="margin-top:12px" data-act="tab:jogo"><div class="ic">🧩</div><div class="tx"><b>Quebra-cabeça ${j.visto ? '' : '<span class="novo">Novo!</span>'}</b><small>Descubra a imagem surpresa montando</small></div><span class="dir">›</span></button>`;
   }
 
   /* ---------- eventos ---------- */
