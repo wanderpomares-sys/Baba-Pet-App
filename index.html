@@ -315,7 +315,7 @@ details.bib li{margin:8px 0}
 .jt{padding:0;border:3px solid transparent;border-radius:14px;overflow:hidden;aspect-ratio:1;min-height:0;min-width:0;background:var(--bg2);cursor:pointer}
 .jt img{width:100%;height:100%;object-fit:cover;display:block}
 .jt.on{border-color:var(--or);box-shadow:0 0 0 2px var(--or)}
-.jniveis{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.jniveis{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
 .fino .jp{border-radius:0}.fino .jp.sel{outline-width:2px;outline-offset:-2px}
 .jniveis .btn{padding:0 6px;min-width:0}
 .jinfo{display:flex;flex-wrap:wrap;gap:6px 16px;justify-content:center;margin-bottom:10px;font-size:17px}
@@ -1188,7 +1188,7 @@ const IMG = {"cuidadora": "data:image/webp;base64,UklGRgyVAABXRUJQVlA4WAoAAAAQAA
      NÃO é conta na nuvem, NÃO recupera por e-mail e NÃO criptografa os dados guardados:
      serve para outras pessoas que peguem o celular não abrirem o app. A biometria usa o
      desbloqueio do próprio aparelho (WebAuthn) apenas para liberar a tela. */
-  const APP_V = '0.25';
+  const APP_V = '0.26';
   const LOCK_KEY = 'babypet.lock', LOCK_F = 'babypet.lock.f', LOCK_REL = 2 * 60000;
   let lockAberto = false, lockModo = 'entrar', lockOcultoEm = 0, bioOk = false;
   const lockCfg = () => { try { const c = JSON.parse(localStorage.getItem(LOCK_KEY) || 'null'); return c && c.salt && c.hash ? c : null; } catch (e) { return null; } };
@@ -2131,8 +2131,8 @@ const IMG = {"cuidadora": "data:image/webp;base64,UklGRgyVAABXRUJQVlA4WAoAAAAQAA
   });
 
   /* ---------- jogo: quebra-cabeça ---------- */
-  const JOGO_BICHOS = [['porquinho', 'Porquinho-da-índia'], ['papagaio', 'Papagaio'], ['iguana', 'Iguana'], ['chinchila', 'Chinchila'], ['furao', 'Furão'], ['gecko', 'Gecko'], ['tartaruga', 'Tartaruga'], ['piton', 'Piton'], ['hamster', 'Hâmster'], ['beta', 'Beta'], ['camaleao', 'Camaleão']];
-  const JOGO_NIVEIS = { 12: 'Desafio', 24: 'Mestre' };
+  const JOGO_BICHOS = [['porquinho', 'Porquinho-da-índia'], ['papagaio', 'Papagaio'], ['iguana', 'Iguana'], ['chinchila', 'Chinchila'], ['furao', 'Furão'], ['gecko', 'Gecko'], ['tartaruga', 'Tartaruga'], ['piton', 'Piton'], ['hamster', 'Hâmster'], ['beta', 'Beta'], ['camaleao', 'Camaleão'], ['jabuti', 'Jabuti'], ['calopsita', 'Calopsita'], ['dragaobarbudo', 'Dragão-barbudo'], ['peixepalhaco', 'Peixe-palhaço'], ['axolote', 'Axolote'], ['coelho', 'Coelho'], ['ourico', 'Ouriço-pigmeu']];
+  const JOGO_NIVEIS = { 6: 'Fácil', 12: 'Desafio', 24: 'Mestre' };
   const JOGO_KEY = 'babypet.jogo';
   const jogoLer = () => { try { const j = JSON.parse(localStorage.getItem(JOGO_KEY) || 'null'); return j && typeof j === 'object' ? j : {}; } catch (e) { return {}; } };
   const jogoGravar = j => { try { localStorage.setItem(JOGO_KEY, JSON.stringify(j)); } catch (e) {} };
@@ -2161,7 +2161,7 @@ const IMG = {"cuidadora": "data:image/webp;base64,UklGRgyVAABXRUJQVlA4WAoAAAAQAA
       ${fotos ? `<div class="jgrade">${fotos}</div>` : `<p class="peq" style="margin-top:4px">${jogoAlbumPet === p.id ? 'Ainda não há fotos no álbum. Adicione algumas em Mais › Álbum para jogar com elas.' : 'Carregando…'}</p>`}</div>
     <div class="glass card" style="margin-top:12px">${cardTit('🦎', 'Bichinhos exóticos')}<div class="jgrade">${bichos}</div></div>
     <h2>Escolha o nível</h2>
-    <div class="jniveis">${[12, 24].map(n => `<button class="btn sm" data-act="jogoiniciar:${n}">${JOGO_NIVEIS[n]}<small style="display:block;font-size:13px;font-weight:500">${n}×${n}${rec[n] ? ' · 🏆 ' + rec[n].m + ' jog.' : ''}</small></button>`).join('')}</div>`;
+    <div class="jniveis">${[6, 12, 24].map(n => `<button class="btn sm" data-act="jogoiniciar:${n}">${JOGO_NIVEIS[n]}<small style="display:block;font-size:13px;font-weight:500">${n}×${n}${rec[n] ? ' · 🏆 ' + rec[n].m + ' jog.' : ''}</small></button>`).join('')}</div>`;
   }
   function telaJogoTab(p) {
     const g = jogoEst, N = g.n;
@@ -2170,7 +2170,7 @@ const IMG = {"cuidadora": "data:image/webp;base64,UklGRgyVAABXRUJQVlA4WAoAAAAQAA
       return `<button class="jp${g.sel === i ? ' sel' : ''}${pc === i ? ' ok' : ''}" data-act="jpeca:${i}" aria-label="Peça ${i + 1} de ${N * N}${pc === i ? ', no lugar certo' : ''}" style="background-image:url('${g.url}');background-size:${N * 100}% ${N * 100}%;background-position:${x}% ${y}%"></button>`;
     };
     const rec = (jogoLer().best || {})[N];
-    const corpo = g.fim || jogoVer ? `<img class="jfull" src="${g.url}" alt="Imagem completa do quebra-cabeça">` : `<div class="jboard${N > 12 ? ' fino' : ''}" style="grid-template-columns:repeat(${N},1fr);gap:${N > 12 ? 0 : 1}px">${g.perm.map((_, i) => peca(i)).join('')}</div>`;
+    const corpo = g.fim || jogoVer ? `<img class="jfull" src="${g.url}" alt="Imagem completa do quebra-cabeça">` : `<div class="jboard${N > 12 ? ' fino' : ''}" style="grid-template-columns:repeat(${N},1fr);gap:${N > 12 ? 0 : N > 6 ? 1 : 2}px">${g.perm.map((_, i) => peca(i)).join('')}</div>`;
     return `<div style="display:flex;align-items:center;gap:10px;margin-bottom:6px"><button class="ghost" data-act="jogosair" aria-label="Sair do jogo">‹ Sair</button></div>
     <h1 style="margin:6px 0 8px">${JOGO_NIVEIS[N]} · ${N}×${N}</h1>
     <div class="jinfo"><span>🔁 <b>${g.mov}</b> jogadas</span><span>⏱️ <b id="jtempo">${jogoTempo((g.fim || Date.now()) - g.t0)}</b></span>${rec ? `<span>🏆 ${rec.m} / ${jogoTempo(rec.t)}</span>` : ''}</div>
