@@ -1214,7 +1214,7 @@ const IMG = {"cuidadora": "data:image/webp;base64,UklGRgyVAABXRUJQVlA4WAoAAAAQAA
      NÃO é conta na nuvem, NÃO recupera por e-mail e NÃO criptografa os dados guardados:
      serve para outras pessoas que peguem o celular não abrirem o app. A biometria usa o
      desbloqueio do próprio aparelho (WebAuthn) apenas para liberar a tela. */
-  const APP_V = '0.30';
+  const APP_V = '0.31';
   const LOCK_KEY = 'babypet.lock', LOCK_F = 'babypet.lock.f', LOCK_REL = 2 * 60000;
   let lockAberto = false, lockModo = 'entrar', lockOcultoEm = 0, bioOk = false;
   const lockCfg = () => { try { const c = JSON.parse(localStorage.getItem(LOCK_KEY) || 'null'); return c && c.salt && c.hash ? c : null; } catch (e) { return null; } };
@@ -2161,7 +2161,7 @@ const IMG = {"cuidadora": "data:image/webp;base64,UklGRgyVAABXRUJQVlA4WAoAAAAQAA
   const AL_KEY = 'babypet.alarmes';
   const AL_TIPOS = [['comida', '🍖', 'Comida'], ['medicacao', '💊', 'Medicação'], ['treino', '🎯', 'Treino'], ['passeio', '🦮', 'Passeio'], ['agua', '💧', 'Água'], ['outro', '🔔', 'Outro']];
   const AL_SONS = [['beep', 'Bipe simples'], ['digital', 'Alerta digital'], ['sino', 'Sino suave'], ['gotas', 'Gotas'], ['passaro', 'Passarinho'], ['miau', 'Miado'], ['latido', 'Latido'], ['sapo', 'Sapinho']];
-  const AL_SONS_ARQ = []; /* sons reais: ['id', 'Nome', 'sons/arquivo.mp3'] */
+  const AL_SONS_ARQ = [['cao1', 'Latido real', 'sons/cao1.mp3'], ['caes', 'Cães latindo', 'sons/caes.mp3'], ['gato', 'Miado real', 'sons/gato.mp3'], ['galo', 'Galo', 'sons/galo.mp3'], ['cavalo1', 'Cavalo (relincho 1)', 'sons/cavalo1.mp3'], ['cavalo2', 'Cavalo (relincho 2)', 'sons/cavalo2.mp3'], ['despertador', 'Despertador eletrônico', 'sons/despertador.mp3'], ['bipeccaminhao', 'Bipe de caminhão', 'sons/bipeccaminhao.mp3'], ['sirene', 'Sirene', 'sons/sirene.mp3'], ['aplausos', 'Aplausos', 'sons/aplausos.mp3'], ['bebe', 'Bebê chorando', 'sons/bebe.mp3']]; /* sons reais (BigSoundBank, CC0) */
   const AL_EST = [['baba', 'Babá (suricata)'], ['animal', 'Bichinho surpresa'], ['simples', 'Simples']];
   const AL_DIAS = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
   const alTipo = k => AL_TIPOS.find(t => t[0] === k) || AL_TIPOS[5];

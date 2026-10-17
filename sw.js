@@ -1,8 +1,8 @@
 /* Babá do Pet — funciona sem internet.
    Páginas e código: tenta a internet primeiro (assim as atualizações chegam sozinhas) e usa a cópia salva se estiver offline.
    Imagens: usa a cópia salva primeiro. */
-const CACHE = 'babypet-v34';
-const BASE = ['./', 'index.html', 'manifest.json', 'biblioteca.json', 'eventos.json', 'privacidade.html', 'manual.html', 'icon-192.png', 'icon-512.png'];
+const CACHE = 'babypet-v35';
+const BASE = ['./', 'index.html', 'manifest.json', 'biblioteca.json', 'eventos.json', 'privacidade.html', 'manual.html', 'icon-192.png', 'icon-512.png', 'sons/cao1.mp3', 'sons/caes.mp3', 'sons/gato.mp3', 'sons/galo.mp3', 'sons/cavalo1.mp3', 'sons/cavalo2.mp3', 'sons/despertador.mp3', 'sons/bipeccaminhao.mp3', 'sons/sirene.mp3', 'sons/aplausos.mp3', 'sons/bebe.mp3'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => Promise.all(BASE.map(u => c.add(new Request(u, { cache: 'reload' })).catch(() => {})))).then(() => self.skipWaiting()));
