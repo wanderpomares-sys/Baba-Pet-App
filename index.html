@@ -1214,7 +1214,7 @@ const IMG = {"cuidadora": "data:image/webp;base64,UklGRgyVAABXRUJQVlA4WAoAAAAQAA
      NÃO é conta na nuvem, NÃO recupera por e-mail e NÃO criptografa os dados guardados:
      serve para outras pessoas que peguem o celular não abrirem o app. A biometria usa o
      desbloqueio do próprio aparelho (WebAuthn) apenas para liberar a tela. */
-  const APP_V = '0.31';
+  const APP_V = '0.32';
   const LOCK_KEY = 'babypet.lock', LOCK_F = 'babypet.lock.f', LOCK_REL = 2 * 60000;
   let lockAberto = false, lockModo = 'entrar', lockOcultoEm = 0, bioOk = false;
   const lockCfg = () => { try { const c = JSON.parse(localStorage.getItem(LOCK_KEY) || 'null'); return c && c.salt && c.hash ? c : null; } catch (e) { return null; } };
@@ -2161,7 +2161,7 @@ const IMG = {"cuidadora": "data:image/webp;base64,UklGRgyVAABXRUJQVlA4WAoAAAAQAA
   const AL_KEY = 'babypet.alarmes';
   const AL_TIPOS = [['comida', '🍖', 'Comida'], ['medicacao', '💊', 'Medicação'], ['treino', '🎯', 'Treino'], ['passeio', '🦮', 'Passeio'], ['agua', '💧', 'Água'], ['outro', '🔔', 'Outro']];
   const AL_SONS = [['beep', 'Bipe simples'], ['digital', 'Alerta digital'], ['sino', 'Sino suave'], ['gotas', 'Gotas'], ['passaro', 'Passarinho'], ['miau', 'Miado'], ['latido', 'Latido'], ['sapo', 'Sapinho']];
-  const AL_SONS_ARQ = [['cao1', 'Latido real', 'sons/cao1.mp3'], ['caes', 'Cães latindo', 'sons/caes.mp3'], ['gato', 'Miado real', 'sons/gato.mp3'], ['galo', 'Galo', 'sons/galo.mp3'], ['cavalo1', 'Cavalo (relincho 1)', 'sons/cavalo1.mp3'], ['cavalo2', 'Cavalo (relincho 2)', 'sons/cavalo2.mp3'], ['despertador', 'Despertador eletrônico', 'sons/despertador.mp3'], ['bipeccaminhao', 'Bipe de caminhão', 'sons/bipeccaminhao.mp3'], ['sirene', 'Sirene', 'sons/sirene.mp3'], ['aplausos', 'Aplausos', 'sons/aplausos.mp3'], ['bebe', 'Bebê chorando', 'sons/bebe.mp3']]; /* sons reais (BigSoundBank, CC0) */
+  const AL_SONS_ARQ = [['cao1', 'Latido real', 'sons/cao1.mp3', 4000], ['caes', 'Cães latindo', 'sons/caes.mp3', 4000], ['gato', 'Miado real', 'sons/gato.mp3', 4000], ['galo', 'Galo', 'sons/galo.mp3', 2800], ['cavalo1', 'Cavalo (relincho 1)', 'sons/cavalo1.mp3', 1600], ['cavalo2', 'Cavalo (relincho 2)', 'sons/cavalo2.mp3', 4000], ['despertador', 'Despertador eletrônico', 'sons/despertador.mp3', 4000], ['bipeccaminhao', 'Bipe de caminhão', 'sons/bipeccaminhao.mp3', 3000], ['sirene', 'Sirene', 'sons/sirene.mp3', 4000], ['aplausos', 'Aplausos', 'sons/aplausos.mp3', 3500], ['bebe', 'Bebê chorando', 'sons/bebe.mp3', 4000]]; /* sons reais (BigSoundBank, CC0) */
   const AL_EST = [['baba', 'Babá (suricata)'], ['animal', 'Bichinho surpresa'], ['simples', 'Simples']];
   const AL_DIAS = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
   const alTipo = k => AL_TIPOS.find(t => t[0] === k) || AL_TIPOS[5];
@@ -2191,6 +2191,7 @@ const IMG = {"cuidadora": "data:image/webp;base64,UklGRgyVAABXRUJQVlA4WAoAAAAQAA
     const o = c.createOscillator(), g = c.createGain();
     o.type = tipo; o.frequency.setValueAtTime(f0, t);
     if (f1 !== f0) o.frequency.exponentialRampToValueAtTime(f1, t + dur);
+    vol = Math.min(0.9, vol * 2.6);
     g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol, t + 0.015); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
     let n = o;
     if (filtro) { const f = c.createBiquadFilter(); f.type = filtro[0]; f.frequency.value = filtro[1]; o.connect(f); n = f; }
@@ -2198,7 +2199,7 @@ const IMG = {"cuidadora": "data:image/webp;base64,UklGRgyVAABXRUJQVlA4WAoAAAAQAA
   }
   function alTocar(id) {
     const arq = AL_SONS_ARQ.find(s => s[0] === id);
-    if (arq) { try { if (!alAudioEl) alAudioEl = new Audio(); alAudioEl.src = arq[2]; alAudioEl.currentTime = 0; alAudioEl.play().catch(() => {}); } catch (e) {} return; }
+    if (arq) { try { if (!alAudioEl) alAudioEl = new Audio(); alAudioEl.src = arq[2]; alAudioEl.volume = 1; alAudioEl.currentTime = 0; alAudioEl.play().catch(() => {}); } catch (e) {} return; }
     const c = alAudio(); if (!c) return; const t = c.currentTime + 0.03;
     const S = {
       beep: () => { for (let i = 0; i < 3; i++) alTom(c, t + i * 0.22, 880, 880, 0.14, 'square', 0.1); },
@@ -2212,7 +2213,17 @@ const IMG = {"cuidadora": "data:image/webp;base64,UklGRgyVAABXRUJQVlA4WAoAAAAQAA
     };
     (S[id] || S.sino)();
   }
-  function alParar() { if (alLoop) { clearInterval(alLoop); alLoop = null; } }
+  function alParar() { if (alLoop) { clearTimeout(alLoop); alLoop = null; } }
+  function alCiclo(id) {
+    alParar(); const ini = Date.now(), arq = AL_SONS_ARQ.find(x => x[0] === id);
+    const passo = () => {
+      if (!alAberto || Date.now() - ini > 60000) { alParar(); return; }
+      alTocar(id);
+      try { if (navigator.vibrate) navigator.vibrate([250, 120, 250]); } catch (e) {}
+      alLoop = setTimeout(passo, arq ? (arq[3] || 4000) + 1000 : 2600);
+    };
+    passo();
+  }
 
   /* janela de aviso */
   let alFila = [], alAberto = null;
@@ -2234,8 +2245,7 @@ const IMG = {"cuidadora": "data:image/webp;base64,UklGRgyVAABXRUJQVlA4WAoAAAAQAA
       <div class="acoes" style="justify-content:center;margin-top:14px"><button class="btn sm" data-act="alfeito:${esc(a.id)}">Feito</button><button class="ghost" data-act="alsoneca:${esc(a.id)}">Soneca 10 min</button></div>
       <button class="ghost" style="margin-top:8px" data-act="aldispensar:${esc(a.id)}">Dispensar</button></div>`;
     document.body.appendChild(el);
-    alParar(); alTocar(a.som); let n = 1; alLoop = setInterval(() => { if (n++ >= 8) { alParar(); return; } alTocar(a.som); }, 6000);
-    try { if (navigator.vibrate) navigator.vibrate([300, 150, 300]); } catch (e) {}
+    alCiclo(a.som);
     try {
       if (document.hidden && 'Notification' in window && Notification.permission === 'granted' && navigator.serviceWorker)
         navigator.serviceWorker.ready.then(r => r.showNotification(tx.titulo, { body: tx.sub || 'Babá do Pet', icon: 'icon-192.png', tag: 'alarme-' + a.id, renotify: true })).catch(() => {});
