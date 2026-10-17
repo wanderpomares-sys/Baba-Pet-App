@@ -1215,7 +1215,7 @@ const IMG = {"cuidadora": "data:image/webp;base64,UklGRgyVAABXRUJQVlA4WAoAAAAQAA
      NÃO é conta na nuvem, NÃO recupera por e-mail e NÃO criptografa os dados guardados:
      serve para outras pessoas que peguem o celular não abrirem o app. A biometria usa o
      desbloqueio do próprio aparelho (WebAuthn) apenas para liberar a tela. */
-  const APP_V = '0.34';
+  const APP_V = '0.35';
   const LOCK_KEY = 'babypet.lock', LOCK_F = 'babypet.lock.f', LOCK_REL = 2 * 60000;
   let lockAberto = false, lockModo = 'entrar', lockOcultoEm = 0, bioOk = false;
   const lockCfg = () => { try { const c = JSON.parse(localStorage.getItem(LOCK_KEY) || 'null'); return c && c.salt && c.hash ? c : null; } catch (e) { return null; } };
@@ -2363,7 +2363,7 @@ const IMG = {"cuidadora": "data:image/webp;base64,UklGRgyVAABXRUJQVlA4WAoAAAAQAA
     <div class="glass card" style="margin-top:12px">${cardTit('ℹ️', 'Com o app aberto')}
       <p class="peq" style="margin:4px 0 10px">Os alarmes tocam por até 1 minuto e mostram a janela de aviso enquanto o app está aberto ou em segundo plano.</p>
       ${perm === 'default' ? '<button class="ghost full" data-act="alnotif">Permitir avisos na tela do aparelho</button>' : perm === 'granted' ? '<p class="peq">Avisos na tela do aparelho: permitidos.</p>' : ''}
-      <button class="ghost full" style="margin-top:8px" data-act="alteste">Testar som e janela</button></div</div>`;
+      <button class="ghost full" style="margin-top:8px" data-act="alteste">Testar o primeiro alarme</button></div</div>`;
   }
   function alForm(a) {
     const novo = !a, p = petAtivo(); if (!p) return;
@@ -2397,7 +2397,11 @@ const IMG = {"cuidadora": "data:image/webp;base64,UklGRgyVAABXRUJQVlA4WAoAAAAQAA
     aled(id) { const a = alLer().find(x => x.id === id); if (a) alForm(a); },
     altog(id) { const l = alLer(), a = l.find(x => x.id === id); if (!a) return; a.ativo = !a.ativo; a.soneca = 0; alGravar(l); render(); },
     alouvir() { const s = $('.sheet [name=som]'); alAudio(); if (s) alTocar(s.value); },
-    alteste() { const p = petAtivo(); if (!p) return; alAudio(); alMostrar({ id: 'teste', petId: p.id, tipo: 'comida', titulo: '', hora: alPad(new Date().getHours()) + ':' + alPad(new Date().getMinutes()), som: 'sino', estilo: 'baba', dias: [0, 1, 2, 3, 4, 5, 6], ativo: true }); },
+    alteste() {
+      const p = petAtivo(); if (!p) return; alAudio();
+      const l = alLer().filter(a => a.petId === p.id), b = l.find(a => a.ativo) || l[0] || { tipo: 'comida', titulo: '', som: 'sino', estilo: 'baba' };
+      alMostrar({ id: 'teste', petId: p.id, tipo: b.tipo, titulo: b.titulo, hora: alPad(new Date().getHours()) + ':' + alPad(new Date().getMinutes()), som: b.som, estilo: b.estilo, dias: [0, 1, 2, 3, 4, 5, 6], ativo: true });
+    },
     alnotif() { try { Notification.requestPermission().then(() => render()); } catch (e) {} },
     alfeito(id) { alFechar(); aviso('Anotado. Bom trabalho!', 2500); try { festa(); } catch (e) {} },
     alsoneca(id) { const l = alLer(), a = l.find(x => x.id === id); if (a) { a.soneca = Date.now() + 10 * 60000; alGravar(l); } alFechar(); aviso('Eu aviso de novo em 10 minutos.', 3000); },
