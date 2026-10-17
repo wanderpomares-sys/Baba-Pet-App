@@ -607,7 +607,8 @@ const IMG = {"cuidadora": "data:image/webp;base64,UklGRgyVAABXRUJQVlA4WAoAAAAQAA
     return `<section class="boas"><img src="${IMG.cuidadora}" alt="Babá, a cuidadora do app">
       <h1>Oi! Eu sou a Babá</h1>
       <p>Vou te ajudar a cuidar do seu pet: vacinas, ração, peso e gastos num lugar só.</p>
-      <button class="btn" data-act="addpet">Cadastrar meu pet</button></section>`;
+      <button class="btn" data-act="addpet">Cadastrar meu pet</button>
+      <button class="ghost" style="margin-top:12px" data-act="entrardemo">🏪 Tem pet shop ou clínica? Veja a demonstração</button></section>`;
   }
 
   /* A mascote muda de pose conforme a situação do pet */
@@ -1108,7 +1109,11 @@ const IMG = {"cuidadora": "data:image/webp;base64,UklGRgyVAABXRUJQVlA4WAoAAAAQAA
 
   function telaMais() {
     return `<h1>Mais</h1>
-    <button class="item" style="margin-top:14px" data-act="tab:biblioteca"><div class="ic">${icone('biblioteca')}</div><div class="tx"><b>Biblioteca de espécies</b><small>Guia de cuidados e alimentos perigosos</small></div><span class="dir">›</span></button>
+    <section class="glass card parceiro" style="margin-top:14px">${cardTit('🏪', 'Tem pet shop, clínica ou banho e tosa?')}
+      <p class="peq" style="margin:4px 0 12px">${DEMO ? 'Você está vendo a demonstração, com o pet Thor e dados de exemplo. Role o Início e a tela de Saúde para ver o cartão do parceiro aparecendo.' : 'Veja como o seu negócio aparece para os tutores quando a vacina vence ou a ração está acabando. O tutor chama você direto no WhatsApp. É só uma demonstração e não mexe nos seus dados reais.'}</p>
+      <div class="acoes">${DEMO ? '<button class="btn" data-act="tab:inicio">Ver o Início</button>' : '<button class="btn" data-act="entrardemo">Abrir a demonstração</button>'}<button class="ghost" data-act="linkdemo">Copiar link</button></div>
+      <a class="ghost full" style="margin-top:8px" href="mailto:suporte.babapet@gmail.com?subject=Quero%20ser%20parceiro%20do%20Bab%C3%A1%20do%20Pet">Quero ser parceiro</a></section>
+    <button class="item" style="margin-top:12px" data-act="tab:biblioteca"><div class="ic">${icone('biblioteca')}</div><div class="tx"><b>Biblioteca de espécies</b><small>Guia de cuidados e alimentos perigosos</small></div><span class="dir">›</span></button>
     ${petAtivo() ? `<button class="item" style="margin-top:12px" data-act="tab:album"><div class="ic">📸</div><div class="tx"><b>Álbum de fotos e vídeos</b><small>Os momentos fofos de ${esc(petAtivo().nome)}</small></div><span class="dir">›</span></button>` : ''}
     ${petAtivo() ? `<button class="item" style="margin-top:12px" data-act="tab:peso"><div class="ic">⚖️</div><div class="tx"><b>Peso</b><small>Histórico de pesagens de ${esc(petAtivo().nome)}</small></div><span class="dir">›</span></button>` : ''}
     ${petAtivo() ? `<button class="item" style="margin-top:12px" data-act="tab:alarmes"><div class="ic">⏰</div><div class="tx"><b>Alarmes</b><small>Ração, remédio, treino e passeio de ${esc(petAtivo().nome)}</small></div><span class="dir">›</span></button>` : ''}
@@ -1132,9 +1137,6 @@ const IMG = {"cuidadora": "data:image/webp;base64,UklGRgyVAABXRUJQVlA4WAoAAAAQAA
     <div class="glass card">${cardTit('✅', 'Verificar instalação')}
       <p class="peq" style="margin:4px 0 12px">Confere se o ícone e o manifesto do app estão no site.</p>
       <button class="ghost full" data-act="diagnostico">Verificar agora</button><div id="diag" style="margin-top:8px"></div></div>
-    <div class="glass card">${cardTit('🎬', 'Demonstração para parceiros')}
-      <p class="peq" style="margin:4px 0 12px">${DEMO ? 'Você está na demonstração, com o pet Thor e dados de exemplo.' : 'Abre o app com dados de exemplo (o pet Thor) e mostra como a sugestão de parceiro aparece. Não mexe nos seus dados reais.'}</p>
-      <div class="acoes">${DEMO ? '' : '<button class="ghost" data-act="entrardemo">Abrir demonstração</button>'}<button class="ghost" data-act="linkdemo">Copiar link da demonstração</button></div></div>
     <div class="glass card">${cardTit('🚀', 'Vem por aí')}
       <p class="peq" style="margin-top:4px">Avisos dentro do app, exercícios e convite para cuidadoras.</p></div>
     ${DEMO ? '' : '<div class="glass card"><button class="ghost perigo full" data-act="apagar">🗑️ Apagar todos os dados</button></div>'}
@@ -1215,7 +1217,7 @@ const IMG = {"cuidadora": "data:image/webp;base64,UklGRgyVAABXRUJQVlA4WAoAAAAQAA
      NÃO é conta na nuvem, NÃO recupera por e-mail e NÃO criptografa os dados guardados:
      serve para outras pessoas que peguem o celular não abrirem o app. A biometria usa o
      desbloqueio do próprio aparelho (WebAuthn) apenas para liberar a tela. */
-  const APP_V = '0.36';
+  const APP_V = '0.37';
   const LOCK_KEY = 'babypet.lock', LOCK_F = 'babypet.lock.f', LOCK_REL = 2 * 60000;
   let lockAberto = false, lockModo = 'entrar', lockOcultoEm = 0, bioOk = false;
   const lockCfg = () => { try { const c = JSON.parse(localStorage.getItem(LOCK_KEY) || 'null'); return c && c.salt && c.hash ? c : null; } catch (e) { return null; } };
@@ -1557,6 +1559,7 @@ const IMG = {"cuidadora": "data:image/webp;base64,UklGRgyVAABXRUJQVlA4WAoAAAAQAA
       if (!par || !p) return;
       if (par.exemplo || !par.whatsapp) { aviso('Demonstração: aqui abriria o WhatsApp de ' + par.nome + ' com a mensagem já pronta.', 5500); return; }
       const c = montarCartao(g, p);
+      try { track('parceiro_contato', { parceiro: par.id, gatilho: g }); } catch (e) {}
       window.open('https://wa.me/' + par.whatsapp + '?text=' + encodeURIComponent(c ? c.msg : 'Olá! Vi vocês no app Babá do Pet.'), '_blank', 'noopener');
     },
     entrardemo() { try { localStorage.setItem('babypet.modo', 'demo'); } catch (e) {} location.href = location.pathname; },
