@@ -325,6 +325,27 @@ details.bib li{margin:8px 0}
 .jp.ok{box-shadow:inset 0 0 0 2px rgba(31,157,88,.75)}
 .jp.sel{outline:4px solid var(--or);outline-offset:-4px;z-index:1;filter:brightness(1.1)}
 .novo{display:inline-block;margin-left:6px;padding:1px 8px;border-radius:999px;background:var(--or);color:#fff;font-size:13px;font-weight:700;vertical-align:middle}
+
+.alm{position:fixed;inset:0;z-index:300;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(6,23,30,.55);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+.alm-card{width:100%;max-width:380px;border-radius:28px;padding:22px 20px;text-align:center;background:var(--bg);box-shadow:var(--glow);animation:almin .35s ease}
+.alm-img{width:132px;height:132px;object-fit:contain;margin:0 auto 6px;display:block}
+.alm-img.foto{object-fit:cover;border-radius:50%;border:4px solid var(--tq)}
+.alm-emoji{font-size:72px;line-height:1.1;margin-bottom:6px}
+.alm-hora{font-size:15px;color:var(--ink2)}
+.alm-t{font-size:24px;margin:6px 0}
+@keyframes almin{from{transform:translateY(14px) scale(.96);opacity:0}to{transform:none;opacity:1}}
+@media (prefers-reduced-motion:reduce){.alm-card{animation:none}}
+.aldias{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.aldia{position:relative}.aldia input{position:absolute;opacity:0;inset:0}
+.aldia span{display:inline-flex;align-items:center;justify-content:center;min-width:46px;min-height:44px;padding:0 10px;border-radius:999px;border:2px solid var(--line);background:var(--campo);cursor:pointer}
+.aldia input:checked+span{background:var(--tq);color:#06353a;border-color:var(--tq-dk);font-weight:700}
+.aldia input:focus-visible+span{outline:3px solid var(--or)}
+.alrow{display:flex;align-items:center;gap:10px;margin-top:10px;padding:12px}
+.alrow.off .alinfo{opacity:.55}
+.alinfo{display:flex;align-items:center;gap:12px;flex:1;min-width:0;text-align:left;background:none;border:0;padding:0;color:inherit;cursor:pointer}
+.alh{font-size:28px;font-weight:700;font-variant-numeric:tabular-nums}
+.alt{display:flex;flex-direction:column;min-width:0}.alt small{color:var(--ink2)}
+.altog{min-height:44px;padding:0 14px;font-size:15px;flex:none}
 </style>
 </head>
 <body>
@@ -744,6 +765,7 @@ const IMG = {"cuidadora": "data:image/webp;base64,UklGRgyVAABXRUJQVlA4WAoAAAAQAA
     ${cartaoAgendaInicio(p)}
     <button class="item" style="margin-top:12px" data-act="tab:biblioteca"><div class="ic">${icone('biblioteca')}</div><div class="tx"><b>${bibDoPet(p) ? 'Guia do ' + esc(bibDoPet(p).nome.toLowerCase()) : 'Biblioteca de espécies'}</b><small>Cuidados, alimentos perigosos e "Posso dar...?"</small></div><span class="dir">›</span></button>
     <button class="item" style="margin-top:12px" data-act="tab:album"><div class="ic">📸</div><div class="tx"><b>Álbum de ${esc(p.nome)}</b><small>Fotos e vídeos fofos, só neste aparelho</small></div><span class="dir">›</span></button>
+    <button class="item" style="margin-top:12px" data-act="tab:alarmes"><div class="ic">⏰</div><div class="tx"><b>Alarmes</b><small>Ração, remédio, treino e passeio</small></div><span class="dir">›</span></button>
     ${jogoCartaoInicio()}
     <h2>Registrar agora</h2>
     <div class="acoes">
@@ -1089,6 +1111,7 @@ const IMG = {"cuidadora": "data:image/webp;base64,UklGRgyVAABXRUJQVlA4WAoAAAAQAA
     <button class="item" style="margin-top:14px" data-act="tab:biblioteca"><div class="ic">${icone('biblioteca')}</div><div class="tx"><b>Biblioteca de espécies</b><small>Guia de cuidados e alimentos perigosos</small></div><span class="dir">›</span></button>
     ${petAtivo() ? `<button class="item" style="margin-top:12px" data-act="tab:album"><div class="ic">📸</div><div class="tx"><b>Álbum de fotos e vídeos</b><small>Os momentos fofos de ${esc(petAtivo().nome)}</small></div><span class="dir">›</span></button>` : ''}
     ${petAtivo() ? `<button class="item" style="margin-top:12px" data-act="tab:peso"><div class="ic">⚖️</div><div class="tx"><b>Peso</b><small>Histórico de pesagens de ${esc(petAtivo().nome)}</small></div><span class="dir">›</span></button>` : ''}
+    ${petAtivo() ? `<button class="item" style="margin-top:12px" data-act="tab:alarmes"><div class="ic">⏰</div><div class="tx"><b>Alarmes</b><small>Ração, remédio, treino e passeio de ${esc(petAtivo().nome)}</small></div><span class="dir">›</span></button>` : ''}
     <button class="item" style="margin-top:12px" data-act="tab:jogo"><div class="ic">🧩</div><div class="tx"><b>Quebra-cabeça</b><small>Jogue com as fotos do álbum e bichinhos exóticos</small></div><span class="dir">›</span></button>
     <a class="item" style="margin-top:12px" href="manual.html" target="_blank" rel="noopener"><div class="ic">📖</div><div class="tx"><b>Manual de uso</b><small>Passo a passo de cada tela do app</small></div><span class="dir">›</span></a>
     <a class="item" style="margin-top:12px" href="mailto:suporte.babapet@gmail.com?subject=Bab%C3%A1%20do%20Pet"><div class="ic">✉️</div><div class="tx"><b>Fale com a gente</b><small>Dúvidas, sugestões e problemas</small></div><span class="dir">›</span></a>
@@ -1123,7 +1146,7 @@ const IMG = {"cuidadora": "data:image/webp;base64,UklGRgyVAABXRUJQVlA4WAoAAAAQAA
     if (travado()) { if (!$('#lockpw') && !$('#lockrc')) app.innerHTML = telaBloqueio(); return; }
     if (!S.pets.length) { app.innerHTML = telaBoasVindas(); return; }
     const p = petAtivo(); S.ativo = p.id;
-    const tela = { inicio: telaInicio, saude: telaSaude, comida: telaComida, peso: telaPeso, gastos: telaGastos, biblioteca: telaBiblioteca, album: telaAlbum, agenda: telaAgenda, jogo: telaJogo }[tab];
+    const tela = { inicio: telaInicio, saude: telaSaude, comida: telaComida, peso: telaPeso, gastos: telaGastos, biblioteca: telaBiblioteca, album: telaAlbum, agenda: telaAgenda, jogo: telaJogo, alarmes: telaAlarmes }[tab];
     app.innerHTML = (DEMO ? bannerDemo() : '') + topo() + (tela ? tela(p) : telaMais()) +
       `<nav class="nav" aria-label="Menu">${TABS.map(([k, l]) => `<button class="${tab === k ? 'on' : ''}" ${tab === k ? 'aria-current="page"' : ''} data-act="${k === 'mais' ? 'maismenu' : 'tab:' + k}" ${k === 'mais' ? 'aria-haspopup="dialog"' : ''}><span>${icone(k)}</span><small>${l}</small></button>`).join('')}</nav>`;
     if (tab === 'album') albumCarregar();
@@ -1191,7 +1214,7 @@ const IMG = {"cuidadora": "data:image/webp;base64,UklGRgyVAABXRUJQVlA4WAoAAAAQAA
      NÃO é conta na nuvem, NÃO recupera por e-mail e NÃO criptografa os dados guardados:
      serve para outras pessoas que peguem o celular não abrirem o app. A biometria usa o
      desbloqueio do próprio aparelho (WebAuthn) apenas para liberar a tela. */
-  const APP_V = '0.29';
+  const APP_V = '0.30';
   const LOCK_KEY = 'babypet.lock', LOCK_F = 'babypet.lock.f', LOCK_REL = 2 * 60000;
   let lockAberto = false, lockModo = 'entrar', lockOcultoEm = 0, bioOk = false;
   const lockCfg = () => { try { const c = JSON.parse(localStorage.getItem(LOCK_KEY) || 'null'); return c && c.salt && c.hash ? c : null; } catch (e) { return null; } };
@@ -1350,7 +1373,7 @@ const IMG = {"cuidadora": "data:image/webp;base64,UklGRgyVAABXRUJQVlA4WAoAAAAQAA
 
   /* ---------- ações ---------- */
   const acoes = {
-    tab(k) { track('screen_view', { screen: k }); if (k === 'jogo') { const j = jogoLer(); if (!j.visto) { j.visto = 1; jogoGravar(j); } } if ((k === 'biblioteca' || k === 'album' || k === 'jogo') && tab !== k) tabAntes = tab; tab = k; render(); window.scrollTo(0, 0); },
+    tab(k) { track('screen_view', { screen: k }); if (k === 'jogo') { const j = jogoLer(); if (!j.visto) { j.visto = 1; jogoGravar(j); } } if ((k === 'biblioteca' || k === 'album' || k === 'jogo' || k === 'alarmes') && tab !== k) tabAntes = tab; tab = k; render(); window.scrollTo(0, 0); },
     voltar() { tab = tabAntes || 'inicio'; render(); window.scrollTo(0, 0); },
     bibesp(id) { bibEsp = id; render(); },
     bibgrupo(g) { bibGrupo = g; const e = BIB.especies.find(x => (x.grupo || 'Outros') === g); if (e) bibEsp = e.id; render(); },
@@ -1628,6 +1651,7 @@ const IMG = {"cuidadora": "data:image/webp;base64,UklGRgyVAABXRUJQVlA4WAoAAAAQAA
       $('#sheet-root').innerHTML = `<div class="veu" data-act="fechar"></div><div class="sheet" role="dialog" aria-modal="true" aria-label="Menu Mais"><h2>Mais</h2><div class="lista">
         ${it('maisir:tab:biblioteca', icone('biblioteca'), 'Biblioteca de espécies', 'Cuidados e alimentos perigosos')}
         ${pet ? it('maisir:tab:album', '📸', 'Álbum de fotos e vídeos', 'Os momentos fofos de ' + esc(pet.nome)) : ''}
+        ${pet ? it('maisir:tab:alarmes', '⏰', 'Alarmes', 'Ração, remédio, treino') : ''}
         ${it('maisir:tab:jogo', '🧩', 'Quebra-cabeça', 'Fotos do álbum e bichinhos exóticos')}
         ${pet ? it('maisir:tab:peso', '⚖️', 'Peso', 'Histórico de pesagens') : ''}
         ${DEMO ? '' : it('maisir:c-lock', '🔒', 'Login e bloqueio', 'Senha e biometria')}
@@ -2131,6 +2155,166 @@ const IMG = {"cuidadora": "data:image/webp;base64,UklGRgyVAABXRUJQVlA4WAoAAAAQAA
     const t = e.target;
     if (t.id === 'albumarq' && t.files && t.files.length) { const arr = Array.from(t.files), tipo = t.dataset.tipo; t.value = ''; albumAdicionar(arr, tipo); }
     else if (t.id === 'vlegenda') { const m = visorAtual(); if (m) { m.legenda = t.value.trim().slice(0, 120); midiaSalvar(m).catch(() => aviso('Não consegui salvar a legenda.')); albumPintar(); } }
+  });
+
+  /* ---------- alarmes ---------- */
+  const AL_KEY = 'babypet.alarmes';
+  const AL_TIPOS = [['comida', '🍖', 'Comida'], ['medicacao', '💊', 'Medicação'], ['treino', '🎯', 'Treino'], ['passeio', '🦮', 'Passeio'], ['agua', '💧', 'Água'], ['outro', '🔔', 'Outro']];
+  const AL_SONS = [['beep', 'Bipe simples'], ['digital', 'Alerta digital'], ['sino', 'Sino suave'], ['gotas', 'Gotas'], ['passaro', 'Passarinho'], ['miau', 'Miado'], ['latido', 'Latido'], ['sapo', 'Sapinho']];
+  const AL_SONS_ARQ = []; /* sons reais: ['id', 'Nome', 'sons/arquivo.mp3'] */
+  const AL_EST = [['baba', 'Babá (suricata)'], ['animal', 'Bichinho surpresa'], ['simples', 'Simples']];
+  const AL_DIAS = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+  const alTipo = k => AL_TIPOS.find(t => t[0] === k) || AL_TIPOS[5];
+  function alLer() {
+    try {
+      const j = JSON.parse(localStorage.getItem(AL_KEY) || '[]');
+      return (Array.isArray(j) ? j : []).filter(a => a && typeof a.id === 'string' && /^\d{2}:\d{2}$/.test(a.hora || '')).map(a => ({
+        id: a.id, petId: a.petId || null, tipo: AL_TIPOS.some(t => t[0] === a.tipo) ? a.tipo : 'outro', titulo: String(a.titulo || '').slice(0, 60), hora: a.hora,
+        dias: Array.isArray(a.dias) ? a.dias.filter(d => d >= 0 && d <= 6) : [0, 1, 2, 3, 4, 5, 6], som: String(a.som || 'sino'), estilo: AL_EST.some(e => e[0] === a.estilo) ? a.estilo : 'baba',
+        ativo: a.ativo !== false, ult: a.ult || '', soneca: Number(a.soneca) || 0 }));
+    } catch (e) { return []; }
+  }
+  const alGravar = l => { try { localStorage.setItem(AL_KEY, JSON.stringify(l)); } catch (e) { aviso('Não consegui salvar o alarme neste aparelho.'); } };
+  const alPad = n => String(n).padStart(2, '0');
+
+  /* sons (sintetizados no próprio aparelho, funcionam sem internet) */
+  let alCtx = null, alLoop = null, alAudioEl = null;
+  function alAudio() {
+    try {
+      if (!alCtx) { const C = window.AudioContext || window.webkitAudioContext; if (!C) return null; alCtx = new C(); }
+      if (alCtx.state === 'suspended') alCtx.resume();
+      return alCtx;
+    } catch (e) { return null; }
+  }
+  document.addEventListener('pointerdown', () => { alAudio(); }, { once: true, passive: true });
+  function alTom(c, t, f0, f1, dur, tipo, vol, filtro) {
+    const o = c.createOscillator(), g = c.createGain();
+    o.type = tipo; o.frequency.setValueAtTime(f0, t);
+    if (f1 !== f0) o.frequency.exponentialRampToValueAtTime(f1, t + dur);
+    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol, t + 0.015); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    let n = o;
+    if (filtro) { const f = c.createBiquadFilter(); f.type = filtro[0]; f.frequency.value = filtro[1]; o.connect(f); n = f; }
+    n.connect(g); g.connect(c.destination); o.start(t); o.stop(t + dur + 0.03);
+  }
+  function alTocar(id) {
+    const arq = AL_SONS_ARQ.find(s => s[0] === id);
+    if (arq) { try { if (!alAudioEl) alAudioEl = new Audio(); alAudioEl.src = arq[2]; alAudioEl.currentTime = 0; alAudioEl.play().catch(() => {}); } catch (e) {} return; }
+    const c = alAudio(); if (!c) return; const t = c.currentTime + 0.03;
+    const S = {
+      beep: () => { for (let i = 0; i < 3; i++) alTom(c, t + i * 0.22, 880, 880, 0.14, 'square', 0.1); },
+      digital: () => { for (let i = 0; i < 4; i++) alTom(c, t + i * 0.13, i % 2 ? 1318 : 988, i % 2 ? 1318 : 988, 0.1, 'triangle', 0.2); },
+      sino: () => { alTom(c, t, 660, 660, 1.5, 'sine', 0.28); alTom(c, t, 1320, 1320, 0.9, 'sine', 0.1); alTom(c, t, 1980, 1980, 0.5, 'sine', 0.05); },
+      gotas: () => { [0, 0.28, 0.52].forEach(x => alTom(c, t + x, 1300, 500, 0.13, 'sine', 0.28)); },
+      passaro: () => { for (let i = 0; i < 4; i++) alTom(c, t + i * 0.13, 2200 + i * 160, 3700, 0.09, 'sine', 0.18); },
+      miau: () => { alTom(c, t, 520, 900, 0.2, 'sawtooth', 0.14, ['lowpass', 1800]); alTom(c, t + 0.2, 900, 540, 0.5, 'sawtooth', 0.14, ['lowpass', 1500]); },
+      latido: () => { [0, 0.24].forEach(x => alTom(c, t + x, 320, 130, 0.14, 'sawtooth', 0.26, ['lowpass', 900])); },
+      sapo: () => { for (let i = 0; i < 3; i++) alTom(c, t + i * 0.17, 140, 210, 0.11, 'square', 0.14, ['lowpass', 520]); }
+    };
+    (S[id] || S.sino)();
+  }
+  function alParar() { if (alLoop) { clearInterval(alLoop); alLoop = null; } }
+
+  /* janela de aviso */
+  let alFila = [], alAberto = null;
+  function alTexto(a) {
+    const p = S.pets.find(x => x.id === a.petId), n = p ? p.nome : 'seu pet', t = alTipo(a.tipo);
+    const frase = { comida: 'Hora da refeição de ' + n, medicacao: 'Hora do remédio de ' + n, treino: 'Hora do treino de ' + n, passeio: 'Hora do passeio com ' + n, agua: 'Hora de conferir a água de ' + n }[a.tipo] || 'Lembrete para ' + n;
+    return { titulo: a.titulo || frase, sub: a.titulo ? frase : '', emoji: t[1], rot: t[2] };
+  }
+  function alMostrar(a) {
+    if (alAberto) { if (!alFila.some(x => x.id === a.id) && alAberto !== a.id) alFila.push(a); return; }
+    alAberto = a.id;
+    const tx = alTexto(a);
+    let img;
+    if (a.estilo === 'animal') img = `<img class="alm-img foto" src="jogo/${JOGO_BICHOS[Math.floor(Math.random() * JOGO_BICHOS.length)][0]}.webp" alt="">`;
+    else if (a.estilo === 'simples') img = `<div class="alm-emoji" aria-hidden="true">${tx.emoji}</div>`;
+    else img = `<img class="alm-img" src="${sur('alerta')}" alt="">`;
+    const el = document.createElement('div'); el.id = 'alarme'; el.className = 'alm'; el.setAttribute('role', 'alertdialog'); el.setAttribute('aria-modal', 'true'); el.setAttribute('aria-label', 'Alarme: ' + tx.titulo);
+    el.innerHTML = `<div class="alm-card">${img}<div class="alm-hora">${tx.emoji} ${esc(tx.rot)} · ${esc(a.hora)}</div><h2 class="alm-t">${esc(tx.titulo)}</h2>${tx.sub ? `<p class="peq">${esc(tx.sub)}</p>` : ''}
+      <div class="acoes" style="justify-content:center;margin-top:14px"><button class="btn sm" data-act="alfeito:${esc(a.id)}">Feito</button><button class="ghost" data-act="alsoneca:${esc(a.id)}">Soneca 10 min</button></div>
+      <button class="ghost" style="margin-top:8px" data-act="aldispensar:${esc(a.id)}">Dispensar</button></div>`;
+    document.body.appendChild(el);
+    alParar(); alTocar(a.som); let n = 1; alLoop = setInterval(() => { if (n++ >= 8) { alParar(); return; } alTocar(a.som); }, 6000);
+    try { if (navigator.vibrate) navigator.vibrate([300, 150, 300]); } catch (e) {}
+    try {
+      if (document.hidden && 'Notification' in window && Notification.permission === 'granted' && navigator.serviceWorker)
+        navigator.serviceWorker.ready.then(r => r.showNotification(tx.titulo, { body: tx.sub || 'Babá do Pet', icon: 'icon-192.png', tag: 'alarme-' + a.id, renotify: true })).catch(() => {});
+    } catch (e) {}
+    track('alarme_disparo', { tipo: a.tipo });
+  }
+  function alFechar() {
+    alParar(); const el = document.getElementById('alarme'); if (el) el.remove(); alAberto = null;
+    const prox = alFila.shift(); if (prox) setTimeout(() => alMostrar(prox), 400);
+  }
+  function alVerificar() {
+    if (DEMO || travado() || !S.pets.length) return;
+    const ag = new Date(), hhmm = alPad(ag.getHours()) + ':' + alPad(ag.getMinutes()), dia = ag.getDay(), hj = hoje(), l = alLer(); let mud = false;
+    l.forEach(a => {
+      if (!a.ativo) return;
+      if (a.soneca) { if (Date.now() >= a.soneca) { a.soneca = 0; mud = true; alMostrar(a); } return; }
+      if (!a.dias.includes(dia) || a.hora > hhmm || a.ult === hj + ' ' + a.hora) return;
+      const [h, m] = a.hora.split(':').map(Number), atraso = (ag.getHours() * 60 + ag.getMinutes()) - (h * 60 + m);
+      a.ult = hj + ' ' + a.hora; mud = true;
+      if (atraso <= 30) alMostrar(a);
+    });
+    if (mud) alGravar(l);
+  }
+  setInterval(alVerificar, 15000);
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) alVerificar(); });
+
+  /* tela e formulário */
+  function telaAlarmes(p) {
+    const l = alLer().filter(a => a.petId === p.id).sort((a, b) => a.hora.localeCompare(b.hora));
+    const resumo = a => (a.dias.length === 7 ? 'Todos os dias' : a.dias.length === 5 && !a.dias.includes(0) && !a.dias.includes(6) ? 'Dias úteis' : a.dias.map(d => AL_DIAS[d]).join(', '));
+    const perm = 'Notification' in window ? Notification.permission : 'unsupported';
+    return `<div style="display:flex;align-items:center;gap:10px;margin-bottom:6px"><button class="ghost" data-act="voltar" aria-label="Voltar">‹ Voltar</button></div>
+    <h1 style="margin:6px 0 0">Alarmes ${doA(p)} ${esc(p.nome)}</h1>
+    <p class="peq" style="margin:2px 0 12px">Ração, remédio, treino, passeio e o que mais você precisar lembrar.</p>
+    <button class="btn full" data-act="aladd">Novo alarme</button>
+    <div style="margin-top:14px">${l.length ? l.map(a => { const t = alTipo(a.tipo); return `<div class="glass card alrow ${a.ativo ? '' : 'off'}"><button class="alinfo" data-act="aled:${esc(a.id)}" aria-label="Editar alarme das ${esc(a.hora)}"><span class="alh">${esc(a.hora)}</span><span class="alt"><b>${t[1]} ${esc(a.titulo || t[2])}</b><small>${esc(resumo(a))} · ${esc((AL_SONS.concat(AL_SONS_ARQ).find(s => s[0] === a.som) || ['', 'Som'])[1])}</small></span></button>
+      <button class="ghost altog" data-act="altog:${esc(a.id)}" aria-pressed="${a.ativo}">${a.ativo ? 'Ligado' : 'Desligado'}</button></div>`; }).join('') : `<div class="glass card vazio"><img src="${sur('atenta')}" alt=""><h3>Nenhum alarme ainda</h3><p>Crie o primeiro e escolha o som e a janela de aviso.</p></div>`}</div>
+    <div class="glass card" style="margin-top:12px">${cardTit('ℹ️', 'Como funciona')}
+      <p class="peq" style="margin:4px 0 10px">Os alarmes tocam e mostram a janela de aviso enquanto o app está aberto ou em segundo plano. Com o app fechado, o navegador não permite tocar.</p>
+      ${perm === 'default' ? '<button class="ghost full" data-act="alnotif">Permitir avisos na tela do aparelho</button>' : perm === 'granted' ? '<p class="peq">Avisos na tela do aparelho: permitidos.</p>' : ''}
+      <button class="ghost full" style="margin-top:8px" data-act="alteste">Testar som e janela</button></div>`;
+  }
+  function alForm(a) {
+    const novo = !a, p = petAtivo(); if (!p) return;
+    a = a || { id: uid(), petId: p.id, tipo: 'comida', titulo: '', hora: '08:00', dias: [0, 1, 2, 3, 4, 5, 6], som: 'sino', estilo: 'baba', ativo: true, ult: '', soneca: 0 };
+    const sons = AL_SONS.concat(AL_SONS_ARQ.map(s => [s[0], s[1]]));
+    const extra = `<div class="fld"><span>Dias da semana</span><div class="aldias">${AL_DIAS.map((n, i) => `<label class="aldia"><input type="checkbox" name="d${i}" ${a.dias.includes(i) ? 'checked' : ''}><span>${n}</span></label>`).join('')}</div></div>`;
+    abrirFolha({
+      titulo: novo ? 'Novo alarme' : 'Editar alarme', extra, ok: 'Salvar', excluir: !novo ? () => alGravar(alLer().filter(x => x.id !== a.id)) : null, confirmar: 'Excluir este alarme?',
+      campos: [
+        { name: 'tipo', label: 'Tipo', type: 'select', options: AL_TIPOS.map(t => [t[0], t[1] + ' ' + t[2]]), value: a.tipo },
+        { name: 'titulo', label: 'Descrição (opcional)', value: a.titulo, ph: 'Ex.: Ração da manhã' },
+        { name: 'hora', label: 'Horário', type: 'time', value: a.hora, req: true },
+        { name: 'som', label: 'Som', type: 'select', options: sons, value: a.som },
+        { name: 'estilo', label: 'Janela de aviso', type: 'select', options: AL_EST, value: a.estilo }
+      ],
+      aoSalvar: d => {
+        const dias = [0, 1, 2, 3, 4, 5, 6].filter(i => d['d' + i]);
+        if (!dias.length) { aviso('Escolha pelo menos um dia da semana.'); throw new Error('validacao'); }
+        if (!/^\d{2}:\d{2}$/.test(d.hora || '')) { aviso('Informe o horário.'); throw new Error('validacao'); }
+        const n = { id: a.id, petId: a.petId, tipo: d.tipo, titulo: String(d.titulo || '').trim().slice(0, 60), hora: d.hora, dias, som: d.som, estilo: d.estilo, ativo: a.ativo !== false, ult: '', soneca: 0 };
+        const l = alLer(), i = l.findIndex(x => x.id === a.id);
+        if (i < 0) { l.push(n); track('alarme_criado', { tipo: n.tipo }); } else l[i] = n;
+        alGravar(l);
+      }
+    });
+    const f = $('.sheet .rodape');
+    if (f) { const b = document.createElement('button'); b.type = 'button'; b.className = 'ghost'; b.dataset.act = 'alouvir'; b.textContent = '🔊 Ouvir o som'; f.insertBefore(b, f.children[1] || null); }
+  }
+  Object.assign(acoes, {
+    aladd() { alForm(null); },
+    aled(id) { const a = alLer().find(x => x.id === id); if (a) alForm(a); },
+    altog(id) { const l = alLer(), a = l.find(x => x.id === id); if (!a) return; a.ativo = !a.ativo; a.soneca = 0; alGravar(l); render(); },
+    alouvir() { const s = $('.sheet [name=som]'); alAudio(); if (s) alTocar(s.value); },
+    alteste() { const p = petAtivo(); if (!p) return; alAudio(); alMostrar({ id: 'teste', petId: p.id, tipo: 'comida', titulo: '', hora: alPad(new Date().getHours()) + ':' + alPad(new Date().getMinutes()), som: 'sino', estilo: 'baba', dias: [0, 1, 2, 3, 4, 5, 6], ativo: true }); },
+    alnotif() { try { Notification.requestPermission().then(() => render()); } catch (e) {} },
+    alfeito(id) { alFechar(); aviso('Anotado. Bom trabalho!', 2500); try { festa(); } catch (e) {} },
+    alsoneca(id) { const l = alLer(), a = l.find(x => x.id === id); if (a) { a.soneca = Date.now() + 10 * 60000; alGravar(l); } alFechar(); aviso('Eu aviso de novo em 10 minutos.', 3000); },
+    aldispensar(id) { alFechar(); }
   });
 
   /* ---------- jogo: quebra-cabeça ---------- */
