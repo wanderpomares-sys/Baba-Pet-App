@@ -234,6 +234,9 @@ button{font:inherit;color:inherit;cursor:pointer}
 .demo button{min-height:40px;padding:0 14px;border-radius:999px;border:1px solid rgba(71,51,0,.35);background:rgba(255,255,255,.65);font-weight:700;color:#473300}
 .bib-chips{display:flex;gap:8px;overflow-x:auto;padding:2px 2px 12px;scrollbar-width:none}
 .bib-chips::-webkit-scrollbar{display:none}
+.bib-foto{height:230px;margin-top:12px;border-radius:22px;overflow:hidden}
+.bib-foto img{width:100%;height:100%;object-fit:cover;display:block}
+.bib-mini{width:44px;height:44px;border-radius:12px;object-fit:cover;display:block}
 .bib-hero{display:flex;gap:14px;align-items:center;padding:16px}
 .bib-emoji{font-size:54px;line-height:1;flex:none}
 .bib-hero p{margin:4px 0 8px}
@@ -660,6 +663,9 @@ const IMG = {"cuidadora": "data:image/webp;base64,UklGRgyVAABXRUJQVlA4WAoAAAAQAA
   }
   function bibAtual(p) { return bibEsp !== undefined ? bibPorId(bibEsp) : bibDoPet(p); }
 
+  /* imagens que temos para a biblioteca (id da espécie -> arquivo em jogo/) */
+  const BIB_IMG = { porquinho: 'porquinho', papagaio: 'papagaio', iguana: 'iguana', chinchila: 'chinchila', furao: 'furao', 'gecko-leopardo': 'gecko', 'tigre-dagua': 'tartaruga', 'piton-real': 'piton', hamster: 'hamster', beta: 'beta', camaleao: 'camaleao', jabuti: 'jabuti', calopsita: 'calopsita', 'dragao-barbudo': 'dragaobarbudo', palhaco: 'peixepalhaco', coelho: 'coelho' };
+  const bibImg = id => BIB_IMG[id] ? 'jogo/' + BIB_IMG[id] + '.webp' : '';
   function telaBiblioteca(p) {
     const sel = bibAtual(p);
     const grupos = [...new Set(BIB.especies.map(e => e.grupo || 'Outros'))], GRUPO_PET = { cao: 'Cães', gato: 'Gatos', ave: 'Aves', roedor: 'Pequenos mamíferos', coelho: 'Pequenos mamíferos', reptil: 'Répteis', peixe: 'Peixes de água doce' };
@@ -673,7 +679,9 @@ const IMG = {"cuidadora": "data:image/webp;base64,UklGRgyVAABXRUJQVlA4WAoAAAAQAA
         ${['ave', 'roedor', 'reptil', 'peixe', 'outro'].includes(p.especie) ? `<button class="ghost" data-act="editpet:${esc(p.id)}">Editar o cadastro de ${esc(p.nome)}</button>` : ''}</div>`;
     } else {
       const tox = sel.toxicos.slice().sort((a, b) => (GRAV[a.gravidade] || GRAV.leve)[2] - (GRAV[b.gravidade] || GRAV.leve)[2]);
-      corpo = `<section class="glass card bib-hero"><div class="bib-emoji">${sel.emoji}</div><div><h2 style="margin:0">${esc(sel.nome)}</h2><p>${esc(sel.resumo)}</p>
+      const fotoBib = bibImg(sel.id);
+      corpo = `<div class="bib-foto">${fotoBib ? `<img src="${fotoBib}" alt="${esc(sel.nome)}">` : ''}</div>
+        <section class="glass card bib-hero" style="margin-top:12px"><div class="bib-emoji">${sel.emoji}</div><div><h2 style="margin:0">${esc(sel.nome)}</h2><p>${esc(sel.resumo)}</p>
           <span class="tag ${sel.status === 'revisado' ? 'ok' : 'warn'}">${sel.status === 'revisado' ? 'Revisado por veterinário' : 'Em revisão veterinária'}</span></div></section>
         <section class="glass card" style="margin-top:12px"><h3>Posso dar...?</h3>
           <p class="peq">Digite um alimento para ver se ele está na lista de perigosos${sel.id ? ' para ' + esc(sel.nome.toLowerCase()) : ''}.</p>
@@ -1217,7 +1225,7 @@ const IMG = {"cuidadora": "data:image/webp;base64,UklGRgyVAABXRUJQVlA4WAoAAAAQAA
      NÃO é conta na nuvem, NÃO recupera por e-mail e NÃO criptografa os dados guardados:
      serve para outras pessoas que peguem o celular não abrirem o app. A biometria usa o
      desbloqueio do próprio aparelho (WebAuthn) apenas para liberar a tela. */
-  const APP_V = '0.37';
+  const APP_V = '0.38';
   const LOCK_KEY = 'babypet.lock', LOCK_F = 'babypet.lock.f', LOCK_REL = 2 * 60000;
   let lockAberto = false, lockModo = 'entrar', lockOcultoEm = 0, bioOk = false;
   const lockCfg = () => { try { const c = JSON.parse(localStorage.getItem(LOCK_KEY) || 'null'); return c && c.salt && c.hash ? c : null; } catch (e) { return null; } };
@@ -1385,7 +1393,7 @@ const IMG = {"cuidadora": "data:image/webp;base64,UklGRgyVAABXRUJQVlA4WAoAAAAQAA
       const bruto = campo.value.trim(), q = norm(bruto);
       if (q.length < 2) { out.innerHTML = '<div class="res neutro">Digite o nome do animal.</div>'; return; }
       const locais = BIB.especies.filter(e => norm(e.nome).includes(q) || (e.palavras || []).some(w => norm(w).includes(q)));
-      const guias = locais.map(e => `<button class="item" style="margin-top:10px" data-act="bibesp:${esc(e.id)}"><div class="ic" style="font-size:28px">${e.emoji}</div><div class="tx"><b>Guia completo: ${esc(e.nome)}</b><small>Cuidados, alimentos perigosos e mais</small></div><span class="dir">›</span></button>`).join('');
+      const guias = locais.map(e => `<button class="item" style="margin-top:10px" data-act="bibesp:${esc(e.id)}"><div class="ic" style="font-size:28px">${bibImg(e.id) ? `<img class="bib-mini" src="${bibImg(e.id)}" alt="">` : e.emoji}</div><div class="tx"><b>Guia completo: ${esc(e.nome)}</b><small>Cuidados, alimentos perigosos e mais</small></div><span class="dir">›</span></button>`).join('');
       out.innerHTML = guias + '<p class="peq" style="margin-top:12px">Buscando informações gerais…</p>';
       const aviso = `<div class="res neutro" style="margin-top:12px">Informação geral da Wikipédia (licença CC BY-SA). Não é um guia de cuidados.<small>Para alimentação e saúde deste animal, converse com um veterinário de animais exóticos. Novos guias completos entram no app aos poucos.</small></div>`;
       try {
