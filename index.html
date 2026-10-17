@@ -898,7 +898,7 @@ const IMG = {"cuidadora": "data:image/webp;base64,UklGRgyVAABXRUJQVlA4WAoAAAAQAA
         salvar();
       } });
   }
-  const icsTxt = t => String(t || '').replace(/\\/g, '\\\\').replace(/;/g, '\;').replace(/,/g, '\\,').replace(/\r?\n/g, '\\n');
+  const icsTxt = t => String(t || '').replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/\r?\n/g, '\\n');
   const icsDia = s => s.replace(/-/g, '');
   function icsLinhas(l) { return l.map(x => { let o = '', r = x; while (r.length > 70) { o += r.slice(0, 70) + '\r\n '; r = r.slice(70); } return o + r; }).join('\r\n'); }
   function gerarICS(p) {
@@ -1215,7 +1215,7 @@ const IMG = {"cuidadora": "data:image/webp;base64,UklGRgyVAABXRUJQVlA4WAoAAAAQAA
      NÃO é conta na nuvem, NÃO recupera por e-mail e NÃO criptografa os dados guardados:
      serve para outras pessoas que peguem o celular não abrirem o app. A biometria usa o
      desbloqueio do próprio aparelho (WebAuthn) apenas para liberar a tela. */
-  const APP_V = '0.33';
+  const APP_V = '0.34';
   const LOCK_KEY = 'babypet.lock', LOCK_F = 'babypet.lock.f', LOCK_REL = 2 * 60000;
   let lockAberto = false, lockModo = 'entrar', lockOcultoEm = 0, bioOk = false;
   const lockCfg = () => { try { const c = JSON.parse(localStorage.getItem(LOCK_KEY) || 'null'); return c && c.salt && c.hash ? c : null; } catch (e) { return null; } };
@@ -2304,6 +2304,47 @@ const IMG = {"cuidadora": "data:image/webp;base64,UklGRgyVAABXRUJQVlA4WAoAAAAQAA
   setInterval(alVerificar, 15000);
   document.addEventListener('visibilitychange', () => { if (!document.hidden) alVerificar(); });
 
+  /* calendário do celular (.ics): toca com o app fechado, usando o som do sistema */
+  function icsDobra(l) {
+    const enc = new TextEncoder(); if (enc.encode(l).length <= 74) return l;
+    let out = '', cur = '';
+    for (const ch of l) { if (enc.encode(cur + ch).length > (out ? 73 : 74)) { out += (out ? '\r\n ' : '') + cur; cur = ch; } else cur += ch; }
+    return out + (out ? '\r\n ' : '') + cur;
+  }
+  function alIcs(lista, nomePet) {
+    const BD = ['SU', 'MO', 'TU', 'WE', 'TH', 'FR', 'SA'], agora = new Date();
+    const dt = d => d.getFullYear() + alPad(d.getMonth() + 1) + alPad(d.getDate()) + 'T' + alPad(d.getHours()) + alPad(d.getMinutes()) + '00';
+    const utc = d => d.getUTCFullYear() + alPad(d.getUTCMonth() + 1) + alPad(d.getUTCDate()) + 'T' + alPad(d.getUTCHours()) + alPad(d.getUTCMinutes()) + alPad(d.getUTCSeconds()) + 'Z';
+    const L = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Baba do Pet//Alarmes//PT-BR', 'CALSCALE:GREGORIAN', 'METHOD:PUBLISH'];
+    lista.forEach(a => {
+      const [h, m] = a.hora.split(':').map(Number); let ini = null;
+      for (let i = 0; i < 8 && !ini; i++) {
+        const d = new Date(agora.getFullYear(), agora.getMonth(), agora.getDate() + i, h, m, 0);
+        if (a.dias.includes(d.getDay()) && d > agora) ini = d;
+      }
+      if (!ini) return;
+      const fim = new Date(ini.getTime() + 15 * 60000), tx = alTexto(a);
+      L.push('BEGIN:VEVENT', 'UID:' + a.id + '@babadopet.com.br', 'DTSTAMP:' + utc(agora), 'DTSTART:' + dt(ini), 'DTEND:' + dt(fim),
+        'RRULE:FREQ=WEEKLY;BYDAY=' + a.dias.slice().sort().map(d => BD[d]).join(','), 'SUMMARY:' + icsTxt(tx.emoji + ' ' + tx.titulo), 'DESCRIPTION:' + icsTxt((tx.sub ? tx.sub + '\n' : '') + 'Lembrete da Babá do Pet'),
+        'TRANSP:TRANSPARENT', 'BEGIN:VALARM', 'ACTION:DISPLAY', 'DESCRIPTION:' + icsTxt(tx.titulo), 'TRIGGER:PT0S', 'END:VALARM', 'END:VEVENT');
+    });
+    L.push('END:VCALENDAR');
+    return L.map(icsDobra).join('\r\n') + '\r\n';
+  }
+  async function alCalendario() {
+    const p = petAtivo(); if (!p) return;
+    const l = alLer().filter(a => a.petId === p.id && a.ativo);
+    if (!l.length) { aviso('Crie e ligue pelo menos um alarme primeiro.'); return; }
+    const txt = alIcs(l, p.nome), nome = 'babadopet-alarmes-' + (p.nome.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'pet') + '.ics';
+    const arq = new File([txt], nome, { type: 'text/calendar' });
+    track('alarme_calendario', { qtd: l.length });
+    try { if (navigator.canShare && navigator.canShare({ files: [arq] })) { await navigator.share({ files: [arq], title: 'Alarmes ' + doA(p) + ' ' + p.nome }); return; } } catch (e) { if (e && e.name === 'AbortError') return; }
+    const u = URL.createObjectURL(arq), a = document.createElement('a'); a.href = u; a.download = nome; document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(u), 4000);
+    aviso('Arquivo gerado. Abra-o para adicionar ao calendário.', 5000);
+  }
+  Object.assign(acoes, { alcalendario() { alCalendario(); } });
+
   /* tela e formulário */
   function telaAlarmes(p) {
     const l = alLer().filter(a => a.petId === p.id).sort((a, b) => a.hora.localeCompare(b.hora));
@@ -2315,10 +2356,14 @@ const IMG = {"cuidadora": "data:image/webp;base64,UklGRgyVAABXRUJQVlA4WAoAAAAQAA
     <button class="btn full" data-act="aladd">Novo alarme</button>
     <div style="margin-top:14px">${l.length ? l.map(a => { const t = alTipo(a.tipo); return `<div class="glass card alrow ${a.ativo ? '' : 'off'}"><button class="alinfo" data-act="aled:${esc(a.id)}" aria-label="Editar alarme das ${esc(a.hora)}"><span class="alh">${esc(a.hora)}</span><span class="alt"><b>${t[1]} ${esc(a.titulo || t[2])}</b><small>${esc(resumo(a))} · ${esc((AL_SONS.concat(AL_SONS_ARQ).find(s => s[0] === a.som) || ['', 'Som'])[1])}</small></span></button>
       <button class="ghost altog" data-act="altog:${esc(a.id)}" aria-pressed="${a.ativo}">${a.ativo ? 'Ligado' : 'Desligado'}</button></div>`; }).join('') : `<div class="glass card vazio"><img src="${sur('atenta')}" alt=""><h3>Nenhum alarme ainda</h3><p>Crie o primeiro e escolha o som e a janela de aviso.</p></div>`}</div>
-    <div class="glass card" style="margin-top:12px">${cardTit('ℹ️', 'Como funciona')}
-      <p class="peq" style="margin:4px 0 10px">Os alarmes tocam e mostram a janela de aviso enquanto o app está aberto ou em segundo plano. Com o app fechado, o navegador não permite tocar.</p>
+    <div class="glass card" style="margin-top:12px">${cardTit('📅', 'Alarme com o app fechado')}
+      <p class="peq" style="margin:4px 0 10px">Para o celular avisar mesmo com o app fechado, envie os alarmes para o <b>calendário do celular</b>. Ele toca e vibra com o som do próprio aparelho, sem precisar de internet.</p>
+      <button class="btn full" data-act="alcalendario" ${l.some(a => a.ativo) ? '' : 'disabled'}>Enviar para o calendário</button>
+      <p class="peq" style="margin:10px 0 0">Ao abrir o arquivo, toque em <b>Adicionar</b>. Se mudar ou apagar um alarme aqui, envie de novo e remova o antigo no calendário. Os sons e as janelas fofas só aparecem com o app aberto.</p></div>
+    <div class="glass card" style="margin-top:12px">${cardTit('ℹ️', 'Com o app aberto')}
+      <p class="peq" style="margin:4px 0 10px">Os alarmes tocam por até 1 minuto e mostram a janela de aviso enquanto o app está aberto ou em segundo plano.</p>
       ${perm === 'default' ? '<button class="ghost full" data-act="alnotif">Permitir avisos na tela do aparelho</button>' : perm === 'granted' ? '<p class="peq">Avisos na tela do aparelho: permitidos.</p>' : ''}
-      <button class="ghost full" style="margin-top:8px" data-act="alteste">Testar som e janela</button></div>`;
+      <button class="ghost full" style="margin-top:8px" data-act="alteste">Testar som e janela</button></div</div>`;
   }
   function alForm(a) {
     const novo = !a, p = petAtivo(); if (!p) return;
