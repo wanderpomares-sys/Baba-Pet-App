@@ -1113,6 +1113,7 @@ const IMG = {"cuidadora": "data:image/webp;base64,UklGRgyVAABXRUJQVlA4WAoAAAAQAA
     ${petAtivo() ? `<button class="item" style="margin-top:12px" data-act="tab:peso"><div class="ic">⚖️</div><div class="tx"><b>Peso</b><small>Histórico de pesagens de ${esc(petAtivo().nome)}</small></div><span class="dir">›</span></button>` : ''}
     ${petAtivo() ? `<button class="item" style="margin-top:12px" data-act="tab:alarmes"><div class="ic">⏰</div><div class="tx"><b>Alarmes</b><small>Ração, remédio, treino e passeio de ${esc(petAtivo().nome)}</small></div><span class="dir">›</span></button>` : ''}
     <button class="item" style="margin-top:12px" data-act="tab:jogo"><div class="ic">🧩</div><div class="tx"><b>Quebra-cabeça</b><small>Jogue com as fotos do álbum e bichinhos exóticos</small></div><span class="dir">›</span></button>
+    <button class="item" style="margin-top:12px" data-act="intro"><div class="ic">👋</div><div class="tx"><b>Conhecer o app</b><small>A Babá mostra o que dá para fazer</small></div><span class="dir">›</span></button>
     <a class="item" style="margin-top:12px" href="manual.html" target="_blank" rel="noopener"><div class="ic">📖</div><div class="tx"><b>Manual de uso</b><small>Passo a passo de cada tela do app</small></div><span class="dir">›</span></a>
     <a class="item" style="margin-top:12px" href="mailto:suporte.babapet@gmail.com?subject=Bab%C3%A1%20do%20Pet"><div class="ic">✉️</div><div class="tx"><b>Fale com a gente</b><small>Dúvidas, sugestões e problemas</small></div><span class="dir">›</span></a>
     ${cartaoInstalar()}
@@ -1214,7 +1215,7 @@ const IMG = {"cuidadora": "data:image/webp;base64,UklGRgyVAABXRUJQVlA4WAoAAAAQAA
      NÃO é conta na nuvem, NÃO recupera por e-mail e NÃO criptografa os dados guardados:
      serve para outras pessoas que peguem o celular não abrirem o app. A biometria usa o
      desbloqueio do próprio aparelho (WebAuthn) apenas para liberar a tela. */
-  const APP_V = '0.32';
+  const APP_V = '0.33';
   const LOCK_KEY = 'babypet.lock', LOCK_F = 'babypet.lock.f', LOCK_REL = 2 * 60000;
   let lockAberto = false, lockModo = 'entrar', lockOcultoEm = 0, bioOk = false;
   const lockCfg = () => { try { const c = JSON.parse(localStorage.getItem(LOCK_KEY) || 'null'); return c && c.salt && c.hash ? c : null; } catch (e) { return null; } };
@@ -2157,6 +2158,37 @@ const IMG = {"cuidadora": "data:image/webp;base64,UklGRgyVAABXRUJQVlA4WAoAAAAQAA
     else if (t.id === 'vlegenda') { const m = visorAtual(); if (m) { m.legenda = t.value.trim().slice(0, 120); midiaSalvar(m).catch(() => aviso('Não consegui salvar a legenda.')); albumPintar(); } }
   });
 
+  /* ---------- apresentação da Babá (primeiras 5 aberturas) ---------- */
+  const INTRO_KEY = 'babypet.intro', INTRO_MAX = 5;
+  let introNaSessao = false;
+  const introLer = () => { try { const j = JSON.parse(localStorage.getItem(INTRO_KEY) || 'null'); return j && typeof j === 'object' ? j : {}; } catch (e) { return {}; } };
+  const introGravar = j => { try { localStorage.setItem(INTRO_KEY, JSON.stringify(j)); } catch (e) {} };
+  function introMostrar() {
+    const tem = S.pets.length > 0;
+    const lista = [['💉', 'Vacinas e vermífugo', 'com aviso de quando vencem'], ['🍖', 'Ração', 'quantos dias faltam para acabar'], ['⚖️', 'Peso e gastos', 'histórico e quanto você gasta por mês'], ['📅', 'Agenda', 'consultas, banho, passeios e eventos'],
+      ['⏰', 'Alarmes', 'comida, remédio e treino, com sons e avisos fofos'], ['📸', 'Álbum', 'fotos e vídeos do seu pet'], ['📚', 'Biblioteca', 'cuidados e o que ele pode ou não comer'], ['🧩', 'Quebra-cabeça', 'com as fotos do seu pet e bichinhos exóticos']];
+    $('#sheet-root').innerHTML = `<div class="veu" data-act="fechar"></div><div class="sheet" role="dialog" aria-modal="true" aria-label="Conheça o app" style="max-height:88vh;overflow:auto">
+      <img src="${sur('rindo')}" alt="" style="width:112px;height:112px;object-fit:contain;display:block;margin:0 auto"><h2 style="text-align:center">Oi! Eu sou a Babá 👋</h2>
+      <p class="peq" style="text-align:center;margin:0 0 12px">Eu ajudo você a cuidar do seu pet em um só lugar. ${tem ? 'Role a tela do <b>Início</b> para baixo e você encontra:' : 'Cadastre seu pet e depois role a tela do <b>Início</b> para baixo. Você vai encontrar:'}</p>
+      <div class="lista">${lista.map(([i, t, d]) => `<div class="item" style="cursor:default"><div class="ic">${i}</div><div class="tx"><b>${t}</b><small>${d}</small></div></div>`).join('')}</div>
+      <div class="rodape"><button class="btn full" type="button" data-act="introok">${tem ? 'Entendi, vamos lá' : 'Entendi'}</button></div></div>`;
+  }
+  function introAuto() {
+    try {
+      if (DEMO || travado() || $('#sheet-root').innerHTML.trim()) return;
+      const j = introLer(); if ((j.n || 0) >= INTRO_MAX) return;
+      if (sessionStorage.getItem('babypet.intro.s')) return;
+      sessionStorage.setItem('babypet.intro.s', '1');
+      j.n = (j.n || 0) + 1; introGravar(j); introNaSessao = true;
+      track('intro_vista', { n: j.n });
+      introMostrar();
+    } catch (e) {}
+  }
+  Object.assign(acoes, {
+    intro() { introMostrar(); },
+    introok() { fechar(); if (S.pets.length && tab === 'inicio') window.scrollTo({ top: Math.round(window.innerHeight * 0.85), behavior: 'smooth' }); }
+  });
+
   /* ---------- alarmes ---------- */
   const AL_KEY = 'babypet.alarmes';
   const AL_TIPOS = [['comida', '🍖', 'Comida'], ['medicacao', '💊', 'Medicação'], ['treino', '🎯', 'Treino'], ['passeio', '🦮', 'Passeio'], ['agua', '💧', 'Água'], ['outro', '🔔', 'Outro']];
@@ -2447,7 +2479,7 @@ const IMG = {"cuidadora": "data:image/webp;base64,UklGRgyVAABXRUJQVlA4WAoAAAAQAA
   });
   function jogoAnunciar() {
     try {
-      const p = petAtivo(); if (!p || DEMO || travado() || tab !== 'inicio' || $('#sheet-root').innerHTML.trim()) return;
+      const p = petAtivo(); if (!p || DEMO || introNaSessao || travado() || tab !== 'inicio' || $('#sheet-root').innerHTML.trim()) return;
       const j = jogoLer(); if (j.visto || (j.avisos || 0) >= 3 || j.ultAviso === hoje()) return;
       j.avisos = (j.avisos || 0) + 1; j.ultAviso = hoje(); jogoGravar(j);
       track('jogo_aviso', { n: j.avisos });
@@ -2533,6 +2565,7 @@ const IMG = {"cuidadora": "data:image/webp;base64,UklGRgyVAABXRUJQVlA4WAoAAAAQAA
   setTimeout(verAtualizacao, 2500);
 
   render();
+  setTimeout(introAuto, 900);
   setTimeout(jogoAnunciar, 1500);
   bioChecar().then(() => { if (travado() ? !!$('#lockpw') : tab === 'mais') { if (travado()) lockDesenhar(); else render(); } });
   anIniciar();
