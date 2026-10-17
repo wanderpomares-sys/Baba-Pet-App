@@ -1227,7 +1227,7 @@ const IMG = {"cuidadora": "data:image/webp;base64,UklGRgyVAABXRUJQVlA4WAoAAAAQAA
      NÃO é conta na nuvem, NÃO recupera por e-mail e NÃO criptografa os dados guardados:
      serve para outras pessoas que peguem o celular não abrirem o app. A biometria usa o
      desbloqueio do próprio aparelho (WebAuthn) apenas para liberar a tela. */
-  const APP_V = '0.40';
+  const APP_V = '0.41';
   const LOCK_KEY = 'babypet.lock', LOCK_F = 'babypet.lock.f', LOCK_REL = 2 * 60000;
   let lockAberto = false, lockModo = 'entrar', lockOcultoEm = 0, bioOk = false;
   const lockCfg = () => { try { const c = JSON.parse(localStorage.getItem(LOCK_KEY) || 'null'); return c && c.salt && c.hash ? c : null; } catch (e) { return null; } };
@@ -1276,7 +1276,6 @@ const IMG = {"cuidadora": "data:image/webp;base64,UklGRgyVAABXRUJQVlA4WAoAAAAQAA
       <button class="ghost perigo" data-act="lockzerar">Sem o código: apagar tudo e recomeçar</button></section>`;
     return `<section class="lock"><img src="${IMG.cuidadora}" alt="Babá, a cuidadora do app">
       <h1>Babá do Pet</h1>
-      <p class="peq">${esc(c.email || '')}</p>
       <label class="fld"><span>Senha</span><input id="lockpw" type="password" autocomplete="current-password"></label>
       <p id="lockmsg" class="peq" role="alert" style="min-height:22px;color:var(--bad)"></p>
       <button class="btn" data-act="lockentrar">Entrar</button>
