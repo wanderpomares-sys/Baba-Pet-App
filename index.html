@@ -665,7 +665,9 @@ const IMG = {"cuidadora": "data:image/webp;base64,UklGRgyVAABXRUJQVlA4WAoAAAAQAA
 
   /* imagens que temos para a biblioteca (id da espécie -> arquivo em jogo/) */
   const BIB_IMG = { porquinho: 'porquinho', papagaio: 'papagaio', iguana: 'iguana', chinchila: 'chinchila', furao: 'furao', 'gecko-leopardo': 'gecko', 'tigre-dagua': 'tartaruga', 'piton-real': 'piton', hamster: 'hamster', beta: 'beta', camaleao: 'camaleao', jabuti: 'jabuti', calopsita: 'calopsita', 'dragao-barbudo': 'dragaobarbudo', palhaco: 'peixepalhaco', coelho: 'coelho' };
-  const bibImg = id => BIB_IMG[id] ? 'jogo/' + BIB_IMG[id] + '.webp' : '';
+  /* fotos em bib/<id>.webp (raças de cães e outros) */
+  const BIB_FOTOS = ['agapornis', 'beagle', 'bengal', 'border-collie', 'boxer', 'bulldog-frances', 'bulldog-ingles', 'canario', 'cao', 'chihuahua', 'cobra-do-milho', 'cocker', 'doberman', 'gato', 'gerbil', 'golden', 'husky', 'kinguio', 'labrador', 'lhasa', 'maine-coon', 'maltes', 'neon', 'pastor-alemao', 'periquito', 'persa', 'pinscher', 'poodle', 'pug', 'ragdoll', 'rato-twister', 'rottweiler', 'salsicha', 'shihtzu', 'siames', 'sphynx', 'spitz-alemao', 'srd-cao', 'srd-gato', 'yorkshire'];
+  const bibImg = id => BIB_IMG[id] ? 'jogo/' + BIB_IMG[id] + '.webp' : BIB_FOTOS.includes(id) ? 'bib/' + id + '.webp' : '';
   function telaBiblioteca(p) {
     const sel = bibAtual(p);
     const grupos = [...new Set(BIB.especies.map(e => e.grupo || 'Outros'))], GRUPO_PET = { cao: 'Cães', gato: 'Gatos', ave: 'Aves', roedor: 'Pequenos mamíferos', coelho: 'Pequenos mamíferos', reptil: 'Répteis', peixe: 'Peixes de água doce' };
@@ -1225,7 +1227,7 @@ const IMG = {"cuidadora": "data:image/webp;base64,UklGRgyVAABXRUJQVlA4WAoAAAAQAA
      NÃO é conta na nuvem, NÃO recupera por e-mail e NÃO criptografa os dados guardados:
      serve para outras pessoas que peguem o celular não abrirem o app. A biometria usa o
      desbloqueio do próprio aparelho (WebAuthn) apenas para liberar a tela. */
-  const APP_V = '0.38';
+  const APP_V = '0.39';
   const LOCK_KEY = 'babypet.lock', LOCK_F = 'babypet.lock.f', LOCK_REL = 2 * 60000;
   let lockAberto = false, lockModo = 'entrar', lockOcultoEm = 0, bioOk = false;
   const lockCfg = () => { try { const c = JSON.parse(localStorage.getItem(LOCK_KEY) || 'null'); return c && c.salt && c.hash ? c : null; } catch (e) { return null; } };
