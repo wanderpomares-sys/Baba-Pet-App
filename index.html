@@ -1266,7 +1266,7 @@ const IMG = {"cuidadora": "data:image/webp;base64,UklGRgyVAABXRUJQVlA4WAoAAAAQAA
      NÃO é conta na nuvem, NÃO recupera por e-mail e NÃO criptografa os dados guardados:
      serve para outras pessoas que peguem o celular não abrirem o app. A biometria usa o
      desbloqueio do próprio aparelho (WebAuthn) apenas para liberar a tela. */
-  const APP_V = '0.43';
+  const APP_V = '0.42';
   const LOCK_KEY = 'babypet.lock', LOCK_F = 'babypet.lock.f', LOCK_REL = 2 * 60000;
   let lockAberto = false, lockModo = 'entrar', lockOcultoEm = 0, bioOk = false;
   const lockCfg = () => { try { const c = JSON.parse(localStorage.getItem(LOCK_KEY) || 'null'); return c && c.salt && c.hash ? c : null; } catch (e) { return null; } };
@@ -2562,7 +2562,7 @@ const IMG = {"cuidadora": "data:image/webp;base64,UklGRgyVAABXRUJQVlA4WAoAAAAQAA
     },
     jogover() { jogoVer = !jogoVer; render(); },
     jogosair() { jogoParar(); jogoEst = null; jogoVer = false; jogoLimpaUrl(); render(); window.scrollTo(0, 0); },
-    idioma(l) { if (l !== 'pt' && l !== 'en') return; try { localStorage.setItem('babypet.lang', l); } catch (e) {} location.reload(); },
+    idioma(l) { if (l !== 'pt' && l !== 'en') return; try { localStorage.setItem('babypet.lang', l); if (LANG_ASK) { localStorage.removeItem(INTRO_KEY); sessionStorage.removeItem('babypet.intro.s'); sessionStorage.setItem('babypet.intro.forcar', '1'); } } catch (e) {} location.reload(); },
     async verupd() {
       if (!navigator.onLine) { aviso(tr('Sem internet agora. Tente de novo quando conectar.')); return; }
       aviso(tr('Procurando versão nova…'), 2000);
@@ -2676,7 +2676,12 @@ const IMG = {"cuidadora": "data:image/webp;base64,UklGRgyVAABXRUJQVlA4WAoAAAAQAA
   }
   render();
   if (LANG_ASK) telaIdioma();
-  else { setTimeout(introAuto, 900); setTimeout(jogoAnunciar, 1500); }
+  else {
+    let forcar = false; try { forcar = sessionStorage.getItem('babypet.intro.forcar') === '1'; sessionStorage.removeItem('babypet.intro.forcar'); } catch (e) {}
+    if (forcar) setTimeout(() => { try { sessionStorage.setItem('babypet.intro.s', '1'); const j = introLer(); j.n = Math.max(j.n || 0, 1); introGravar(j); introNaSessao = true; introMostrar(); } catch (e) {} }, 700);
+    else setTimeout(introAuto, 900);
+    setTimeout(jogoAnunciar, 1500);
+  }
   bioChecar().then(() => { if (travado() ? !!$('#lockpw') : tab === 'mais') { if (travado()) lockDesenhar(); else render(); } });
   anIniciar();
   if (AVISO_INICIAL) aviso(AVISO_INICIAL, 7000);
