@@ -1266,7 +1266,7 @@ const IMG = {"cuidadora": "data:image/webp;base64,UklGRgyVAABXRUJQVlA4WAoAAAAQAA
      NÃO é conta na nuvem, NÃO recupera por e-mail e NÃO criptografa os dados guardados:
      serve para outras pessoas que peguem o celular não abrirem o app. A biometria usa o
      desbloqueio do próprio aparelho (WebAuthn) apenas para liberar a tela. */
-  const APP_V = '0.42';
+  const APP_V = '0.45';
   const LOCK_KEY = 'babypet.lock', LOCK_F = 'babypet.lock.f', LOCK_REL = 2 * 60000;
   let lockAberto = false, lockModo = 'entrar', lockOcultoEm = 0, bioOk = false;
   const lockCfg = () => { try { const c = JSON.parse(localStorage.getItem(LOCK_KEY) || 'null'); return c && c.salt && c.hash ? c : null; } catch (e) { return null; } };
@@ -2227,7 +2227,7 @@ const IMG = {"cuidadora": "data:image/webp;base64,UklGRgyVAABXRUJQVlA4WAoAAAAQAA
   function introAuto() {
     try {
       if (DEMO || travado() || $('#sheet-root').innerHTML.trim()) return;
-      const j = introLer(); if ((j.n || 0) >= INTRO_MAX) return;
+      const j = introLer(); if ((j.n || 0) >= INTRO_MAX && S.pets.length) return; /* sem pet cadastrado, a apresentação aparece a cada abertura */
       if (sessionStorage.getItem('babypet.intro.s')) return;
       sessionStorage.setItem('babypet.intro.s', '1');
       j.n = (j.n || 0) + 1; introGravar(j); introNaSessao = true;
