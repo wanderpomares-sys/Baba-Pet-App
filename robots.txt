@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /painel_admin.html
+
+Sitemap: https://babadopet.com.br/sitemap.xml
