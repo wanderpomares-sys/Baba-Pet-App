@@ -372,6 +372,12 @@ details.bib li{margin:8px 0}
    Os textos do app ficam em português dentro do código, embrulhados em tr('texto {0}', valores).
    Em inglês, tr() procura a tradução em window.BABA_EN (arquivo i18n-en.js). Sem tradução, mostra o português.
    O idioma vem da escolha salva ("babypet.lang") ou, na primeira vez, do idioma do celular. */
+const LANG_DET = (() => { const l = (navigator.languages && navigator.languages[0]) || navigator.language || 'pt-BR'; return /^pt/i.test(l) ? 'pt' : 'en'; })();
+/* Primeiro acesso: sem idioma salvo e sem dados antigos, o app pergunta. Quem já usava o app continua em português. */
+const LANG_ASK = (() => { try { const s = localStorage.getItem('babypet.lang'); if (s === 'pt' || s === 'en') return false;
+  let tem = false; try { const j = JSON.parse(localStorage.getItem('babypet.v1') || 'null'); tem = !!(j && Array.isArray(j.pets) && j.pets.length); } catch (e) {}
+  if (tem || /[?&]demo\b/.test(location.search)) { localStorage.setItem('babypet.lang', 'pt'); return false; }
+  return true; } catch (e) { return false; } })();
 const LANG = (() => {
   try { const s = localStorage.getItem('babypet.lang'); if (s === 'pt' || s === 'en') return s; } catch (e) {}
   const l = (navigator.languages && navigator.languages[0]) || navigator.language || 'pt-BR';
@@ -1260,7 +1266,7 @@ const IMG = {"cuidadora": "data:image/webp;base64,UklGRgyVAABXRUJQVlA4WAoAAAAQAA
      NÃO é conta na nuvem, NÃO recupera por e-mail e NÃO criptografa os dados guardados:
      serve para outras pessoas que peguem o celular não abrirem o app. A biometria usa o
      desbloqueio do próprio aparelho (WebAuthn) apenas para liberar a tela. */
-  const APP_V = '0.42';
+  const APP_V = '0.43';
   const LOCK_KEY = 'babypet.lock', LOCK_F = 'babypet.lock.f', LOCK_REL = 2 * 60000;
   let lockAberto = false, lockModo = 'entrar', lockOcultoEm = 0, bioOk = false;
   const lockCfg = () => { try { const c = JSON.parse(localStorage.getItem(LOCK_KEY) || 'null'); return c && c.salt && c.hash ? c : null; } catch (e) { return null; } };
@@ -2659,9 +2665,18 @@ const IMG = {"cuidadora": "data:image/webp;base64,UklGRgyVAABXRUJQVlA4WAoAAAAQAA
   document.addEventListener('visibilitychange', () => { if (!document.hidden) { verAtualizacao(); navigator.serviceWorker && navigator.serviceWorker.getRegistration().then(g => g && g.update()).catch(() => {}); } });
   setTimeout(verAtualizacao, 2500);
 
+  function telaIdioma() {
+    const o = document.createElement('div'); o.id = 'idioma-inicial';
+    o.style.cssText = 'position:fixed;inset:0;z-index:9999;background:var(--bg,#E8FAF6);color:var(--ink,#0B2B33);display:flex;align-items:center;justify-content:center;padding:24px;overflow:auto';
+    o.innerHTML = `<section class="boas" style="max-width:420px;width:100%;text-align:center"><img src="${IMG.cuidadora}" alt="" style="max-width:220px;width:60%;height:auto">
+      <h1 style="margin:8px 0 4px">Hi! I'm Babá · Oi! Eu sou a Babá</h1>
+      <p style="margin:0 0 18px">Choose your language<br>Escolha o idioma</p>
+      <div style="display:grid;gap:12px"><button class="${LANG_DET === 'pt' ? 'btn' : 'ghost'}" data-act="idioma:pt">🇧🇷 Português</button><button class="${LANG_DET === 'en' ? 'btn' : 'ghost'}" data-act="idioma:en">🇺🇸 English</button></div></section>`;
+    document.body.appendChild(o);
+  }
   render();
-  setTimeout(introAuto, 900);
-  setTimeout(jogoAnunciar, 1500);
+  if (LANG_ASK) telaIdioma();
+  else { setTimeout(introAuto, 900); setTimeout(jogoAnunciar, 1500); }
   bioChecar().then(() => { if (travado() ? !!$('#lockpw') : tab === 'mais') { if (travado()) lockDesenhar(); else render(); } });
   anIniciar();
   if (AVISO_INICIAL) aviso(AVISO_INICIAL, 7000);
