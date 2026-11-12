@@ -1162,7 +1162,7 @@ const IMG = {"cuidadora": "data:image/webp;base64,UklGRgyVAABXRUJQVlA4WAoAAAAQAA
     <section class="glass card parceiro" style="margin-top:14px">${cardTit('🏪', tr('Tem pet shop, clínica ou banho e tosa?'))}
       <p class="peq" style="margin:4px 0 12px">${DEMO ? tr('Você está vendo a demonstração, com o pet Thor e dados de exemplo. Role o Início e a tela de Saúde para ver o cartão do parceiro aparecendo.') : tr('Veja como o seu negócio aparece para os tutores quando a vacina vence ou a ração está acabando. O tutor chama você direto no WhatsApp. É só uma demonstração e não mexe nos seus dados reais.')}</p>
       <div class="acoes">${DEMO ? '<button class="btn" data-act="tab:inicio">' + tr('Ver o Início') + '</button>' : '<button class="btn" data-act="entrardemo">' + tr('Abrir a demonstração') + '</button>'}<button class="ghost" data-act="linkdemo">${tr('Copiar link')}</button></div>
-      <a class="ghost full" style="margin-top:8px" href="mailto:suporte.babapet@gmail.com?subject=Quero%20ser%20parceiro%20do%20Bab%C3%A1%20do%20Pet">${tr('Quero ser parceiro')}</a></section>
+      <a class="ghost full" style="margin-top:8px" href="mailto:suporte@babadopet.com.br?subject=Quero%20ser%20parceiro%20do%20Bab%C3%A1%20do%20Pet">${tr('Quero ser parceiro')}</a></section>
     <button class="item" style="margin-top:12px" data-act="tab:biblioteca"><div class="ic">${icone('biblioteca')}</div><div class="tx">${tr('<b>Biblioteca de espécies</b><small>Guia de cuidados e alimentos perigosos</small>')}</div><span class="dir">›</span></button>
     ${petAtivo() ? `<button class="item" style="margin-top:12px" data-act="tab:album"><div class="ic">📸</div><div class="tx">${tr('<b>Álbum de fotos e vídeos</b><small>Os momentos fofos de {0}</small>', esc(petAtivo().nome))}</div><span class="dir">›</span></button>` : ''}
     ${petAtivo() ? `<button class="item" style="margin-top:12px" data-act="tab:peso"><div class="ic">⚖️</div><div class="tx">${tr('<b>Peso</b><small>Histórico de pesagens de {0}</small>', esc(petAtivo().nome))}</div><span class="dir">›</span></button>` : ''}
@@ -1170,7 +1170,7 @@ const IMG = {"cuidadora": "data:image/webp;base64,UklGRgyVAABXRUJQVlA4WAoAAAAQAA
     <button class="item" style="margin-top:12px" data-act="tab:jogo"><div class="ic">🧩</div><div class="tx">${tr('<b>Quebra-cabeça</b><small>Jogue com as fotos do álbum e bichinhos exóticos</small>')}</div><span class="dir">›</span></button>
     <button class="item" style="margin-top:12px" data-act="intro"><div class="ic">👋</div><div class="tx">${tr('<b>Conhecer o app</b><small>A Babá mostra o que dá para fazer</small>')}</div><span class="dir">›</span></button>
     <a class="item" style="margin-top:12px" href="${LANG === 'en' ? 'manual-en.html' : 'manual.html'}" target="_blank" rel="noopener"><div class="ic">📖</div><div class="tx">${tr('<b>Manual de uso</b><small>Passo a passo de cada tela do app</small>')}</div><span class="dir">›</span></a>
-    <a class="item" style="margin-top:12px" href="mailto:suporte.babapet@gmail.com?subject=Bab%C3%A1%20do%20Pet"><div class="ic">✉️</div><div class="tx">${tr('<b>Fale com a gente</b><small>Dúvidas, sugestões e problemas</small>')}</div><span class="dir">›</span></a>
+    <a class="item" style="margin-top:12px" href="mailto:suporte@babadopet.com.br?subject=Bab%C3%A1%20do%20Pet"><div class="ic">✉️</div><div class="tx">${tr('<b>Fale com a gente</b><small>Dúvidas, sugestões e problemas</small>')}</div><span class="dir">›</span></a>
     ${cartaoIdioma()}
     ${cartaoInstalar()}
     <div class="glass card" id="c-dados">${cardTit('💾', tr('Seus dados'))}
@@ -1268,7 +1268,7 @@ const IMG = {"cuidadora": "data:image/webp;base64,UklGRgyVAABXRUJQVlA4WAoAAAAQAA
      NÃO é conta na nuvem, NÃO recupera por e-mail e NÃO criptografa os dados guardados:
      serve para outras pessoas que peguem o celular não abrirem o app. A biometria usa o
      desbloqueio do próprio aparelho (WebAuthn) apenas para liberar a tela. */
-  const APP_V = '0.45';
+  const APP_V = '0.46';
   const LOCK_KEY = 'babypet.lock', LOCK_F = 'babypet.lock.f', LOCK_REL = 2 * 60000;
   let lockAberto = false, lockModo = 'entrar', lockOcultoEm = 0, bioOk = false;
   const lockCfg = () => { try { const c = JSON.parse(localStorage.getItem(LOCK_KEY) || 'null'); return c && c.salt && c.hash ? c : null; } catch (e) { return null; } };
@@ -1711,7 +1711,7 @@ const IMG = {"cuidadora": "data:image/webp;base64,UklGRgyVAABXRUJQVlA4WAoAAAAQAA
         ${DEMO ? '' : it('maisir:c-lock', '🔒', tr('Login e bloqueio'), tr('Senha e biometria'))}
         ${it('maisir:c-dados', '💾', tr('Backup e dados'), tr('Salvar, importar e Google'))}
         <a class="item" href="${LANG === 'en' ? 'manual-en.html' : 'manual.html'}" target="_blank" rel="noopener" data-act="fechar"><div class="ic">📖</div><div class="tx">${tr('<b>Manual de uso</b>')}</div><span class="dir">›</span></a>
-        <a class="item" href="mailto:suporte.babapet@gmail.com?subject=Bab%C3%A1%20do%20Pet" data-act="fechar"><div class="ic">✉️</div><div class="tx">${tr('<b>Fale com a gente</b>')}</div><span class="dir">›</span></a>
+        <a class="item" href="mailto:suporte@babadopet.com.br?subject=Bab%C3%A1%20do%20Pet" data-act="fechar"><div class="ic">✉️</div><div class="tx">${tr('<b>Fale com a gente</b>')}</div><span class="dir">›</span></a>
         ${it('maisir:c-priv', '🛡️', tr('Privacidade'), tr('Como cuidamos dos seus dados'))}
         ${it('maisir:tab:mais', '⋯', tr('Todas as opções'), tr('Abrir a tela Mais completa'))}
       </div><div class="rodape"><button class="ghost" type="button" data-act="fechar">${tr('Fechar')}</button></div></div>`;
