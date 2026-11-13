@@ -229,7 +229,7 @@ button{font:inherit;color:inherit;cursor:pointer}
 .par-info small{display:block}
 .par-logo{flex:none;width:50px;height:50px;border-radius:16px;background:var(--pp);color:#fff;display:grid;place-items:center;font:600 26px var(--f-titulo)}
 .oferta{background:#FFE98A;color:#473300;border-radius:14px;padding:10px 12px;font-weight:700;margin-bottom:14px}
-.porque{border:0;background:none;color:var(--ink2);text-decoration:underline;font-size:15px;min-height:40px;padding:0 4px}
+.parceiro .linha{flex-wrap:wrap;gap:2px 8px}.porque{white-space:nowrap;border:0;background:none;color:var(--ink2);text-decoration:underline;font-size:15px;min-height:40px;padding:0 4px}
 .demo{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;margin:0 0 10px;padding:10px 14px;border-radius:18px;background:#FFE98A;color:#473300;font-size:16px;font-weight:700}
 .demo span{flex:1;min-width:150px}
 .demo button{min-height:40px;padding:0 14px;border-radius:999px;border:1px solid rgba(71,51,0,.35);background:rgba(255,255,255,.65);font-weight:700;color:#473300}
@@ -762,7 +762,7 @@ const IMG = {"cuidadora": "data:image/webp;base64,UklGRgyVAABXRUJQVlA4WAoAAAAQAA
     const par = listaParceiros().find(x => x.gatilho === g); if (!par) return '';
     const c = montarCartao(g, p); if (!c) return '';
     return `<section class="glass card parceiro" aria-label="${tra('Sugestão de parceiro')}">
-      <div class="linha"><span class="tag neutro">${tr('Patrocinado{0}', par.exemplo ? tr(' · exemplo') : '')}</span><button class="porque" data-act="porque">${tr('Por que vejo isso?')}</button></div>
+      <div class="linha"><span class="tag neutro">${tr('Espaço patrocinado{0}', par.exemplo ? tr(' · exemplo') : '')}</span><button class="porque" data-act="porque">${tr('Por que vejo isso?')}</button></div>
       <h3 style="margin-top:8px">${esc(c.titulo)}</h3><p>${esc(c.texto)}</p>
       <div class="par-info"><div class="par-logo">${esc(par.nome.charAt(0))}</div><div><b>${esc(par.nome)}</b><small>${esc(par.area)}</small></div></div>
       <div class="oferta">🎁 ${esc(par.oferta)}</div>
@@ -1268,7 +1268,7 @@ const IMG = {"cuidadora": "data:image/webp;base64,UklGRgyVAABXRUJQVlA4WAoAAAAQAA
      NÃO é conta na nuvem, NÃO recupera por e-mail e NÃO criptografa os dados guardados:
      serve para outras pessoas que peguem o celular não abrirem o app. A biometria usa o
      desbloqueio do próprio aparelho (WebAuthn) apenas para liberar a tela. */
-  const APP_V = '0.46';
+  const APP_V = '0.47';
   const LOCK_KEY = 'babypet.lock', LOCK_F = 'babypet.lock.f', LOCK_REL = 2 * 60000;
   let lockAberto = false, lockModo = 'entrar', lockOcultoEm = 0, bioOk = false;
   const lockCfg = () => { try { const c = JSON.parse(localStorage.getItem(LOCK_KEY) || 'null'); return c && c.salt && c.hash ? c : null; } catch (e) { return null; } };
