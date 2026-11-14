@@ -415,7 +415,7 @@ const IMG = {"cuidadora": "data:image/webp;base64,UklGRgyVAABXRUJQVlA4WAoAAAAQAA
 
   /* ---------- PARCEIROS ----------
      Quando fechar com um pet shop ou clínica, copie o modelo abaixo para a lista PARCEIROS.
-     gatilho: 'saude' (vacina ou vermífugo perto de vencer) ou 'racao' (ração acabando)
+     gatilho: 'saude' (vacina ou vermífugo perto de vencer), 'racao' (ração acabando), 'banho' (banho ou tosa marcado na agenda) ou 'peso' (mudança grande de peso)
      whatsapp: número com 55 e DDD, só dígitos (ex.: '5511999999999')
      Exemplo de linha:
        { id: 'clinica-xyz', gatilho: 'saude', nome: 'Clínica XYZ', area: 'Bairro, Cidade', oferta: '10% de desconto na vacina', whatsapp: '5511999999999' }
@@ -423,7 +423,9 @@ const IMG = {"cuidadora": "data:image/webp;base64,UklGRgyVAABXRUJQVlA4WAoAAAAQAA
   const PARCEIROS = [];
   const EXEMPLOS = [
     { id: 'ex-clinica', gatilho: 'saude', nome: tr('Clínica Vet Exemplo'), area: tr('Bairro Exemplo'), oferta: tr('10% de desconto para quem vem pela Babá do Pet'), whatsapp: '', exemplo: true },
-    { id: 'ex-petshop', gatilho: 'racao', nome: tr('Pet Shop Exemplo'), area: tr('Bairro Exemplo'), oferta: tr('Entrega grátis em ração acima de 10 kg'), whatsapp: '', exemplo: true }
+    { id: 'ex-petshop', gatilho: 'racao', nome: tr('Pet Shop Exemplo'), area: tr('Bairro Exemplo'), oferta: tr('10% de desconto na primeira compra de ração'), whatsapp: '', exemplo: true },
+    { id: 'ex-peso', gatilho: 'peso', nome: tr('Vet Nutri Exemplo'), area: tr('Bairro Exemplo'), oferta: tr('10% de desconto na consulta de avaliação'), whatsapp: '', exemplo: true },
+    { id: 'ex-banho', gatilho: 'banho', nome: tr('Banho e Tosa Exemplo'), area: tr('Bairro Exemplo'), oferta: tr('10% de desconto no primeiro banho'), whatsapp: '', exemplo: true }
   ];
   const listaParceiros = () => DEMO ? EXEMPLOS : PARCEIROS;
 
@@ -490,7 +492,7 @@ const IMG = {"cuidadora": "data:image/webp;base64,UklGRgyVAABXRUJQVlA4WAoAAAAQAA
       { id: uid(), petId: id, tipo: 'vacina', nome: 'V10', aplicada: addDias(h, -245), proxima: addDias(h, 120) },
       { id: uid(), petId: id, tipo: 'vacina', nome: tr('Antirrábica'), aplicada: addDias(h, -200), proxima: addDias(h, 165) });
     d.planos[id] = { produto: tr('Ração adulto'), marca: tr('Premium'), dose: 300, refeicoes: 2, pacote: 10000, preco: 189.9, aberto: addDias(h, -28) };
-    [[-84, 28.4], [-56, 29.1], [-28, 29.8], [-3, 30.2]].forEach(([n, k]) => d.pesos.push({ id: uid(), petId: id, data: addDias(h, n), kg: k }));
+    [[-84, 27.6], [-56, 27.8], [-28, 28.0], [-3, 31.0]].forEach(([n, k]) => d.pesos.push({ id: uid(), petId: id, data: addDias(h, n), kg: k }));
     d.gastos.push({ id: uid(), petId: id, cat: 'racao', valor: 189.9, data: h, desc: tr('Ração adulto') },
                   { id: uid(), petId: id, cat: 'consulta', valor: 220, data: h, desc: tr('Check-up') });
     d.refeicoes.push({ id: uid(), petId: id, data: h, hora: '08:10', g: 150 });
@@ -751,6 +753,22 @@ const IMG = {"cuidadora": "data:image/webp;base64,UklGRgyVAABXRUJQVlA4WAoAAAAQAA
         botao: tr('Agendar agora'),
         msg: tr('Olá! Vi vocês no app Babá do Pet. Quero agendar {0} {1} {2}.', v.nome, paraOA(p), p.nome) };
     }
+    if (g === 'peso') {
+      const ps = pesosDo(p), u = ps[ps.length - 1], a = ps[ps.length - 2];
+      if (!u || !a || Math.abs((u.kg - a.kg) / a.kg * 100) < 10) return null;
+      return { titulo: tr('Peso mudou bastante'),
+        texto: tr('O peso {0} {1} mudou bastante desde a pesagem anterior.', doA(p), p.nome),
+        botao: tr('Agendar agora'),
+        msg: tr('Olá! Vi vocês no app Babá do Pet. Quero marcar uma avaliação do peso {0} {1}.', doA(p), p.nome) };
+    }
+    if (g === 'banho') {
+      const a = agDo(p).filter(x => !x.feito && (x.tipo === 'banho' || x.tipo === 'tosa') && ['atrasado', 'hoje', 'semana'].includes(statusAg(x).grupo)).sort(agOrdem)[0];
+      if (!a) return null;
+      return { titulo: tr('Hora do banho e tosa'),
+        texto: tr('{0} {1} {2}: {3}', a.tipo === 'tosa' ? tr('Tosa') : tr('Banho'), doA(p), p.nome, fmtData(a.data) + (a.hora ? ' ' + a.hora : '')),
+        botao: tr('Agendar agora'),
+        msg: tr('Olá! Vi vocês no app Babá do Pet. Quero agendar banho e tosa {0} {1}.', paraOA(p), p.nome) };
+    }
     const pl = planoDo(p), ip = infoPacote(pl);
     if (!ip || ip.resta > 7) return null;
     return { titulo: tr('Hora de repor a ração'),
@@ -791,7 +809,7 @@ const IMG = {"cuidadora": "data:image/webp;base64,UklGRgyVAABXRUJQVlA4WAoAAAAQAA
     const st = streakAtual();
     const msgB = mensagemBabi(p);
     return `<section class="hero glass"><img src="${sur(poseBabi)}" alt="${tra('Babá, a mascote do app')}"><div class="bolha">${msgB}</div></section>
-    ${cartaoParceiro('saude', p) || cartaoParceiro('racao', p)}
+    ${cartaoParceiro('saude', p) || cartaoParceiro('racao', p) || cartaoParceiro('banho', p)}
     ${dicaSeguranca()}
     <div class="grid2">
       <button class="tile t-pk" data-act="tab:saude"><span class="t">${tr('{0} Saúde', icone('saude'))}</span>
@@ -913,6 +931,7 @@ const IMG = {"cuidadora": "data:image/webp;base64,UklGRgyVAABXRUJQVlA4WAoAAAAQAA
     return `<h1>${tr('Agenda {0} {1}', doA(p), esc(p.nome))}</h1><p class="peq" style="margin:4px 0 12px">${tr('Passeio, treino, banho, tosa, consultas, concursos e eventos.')}</p>
     <div class="chips" style="margin-bottom:12px">${chips}</div>
     <div class="acoes"><button class="btn" data-act="novoag:passeio">${tr('Novo compromisso')}</button></div>
+    ${cartaoParceiro('banho', p)}
     ${ativos.length ? blocos : `<div class="glass card vazio" style="margin-top:14px"><img src="${sur('pensando')}" alt=""><h3>${tr('Agenda vazia')}</h3><p>${tr('Marque o passeio de todo dia, o banho do mês ou um concurso. Quando fizer, toque em "Feito".')}</p></div>`}
     ${blocoPlano}
     ${blocoEventos(p)}
@@ -1120,6 +1139,7 @@ const IMG = {"cuidadora": "data:image/webp;base64,UklGRgyVAABXRUJQVlA4WAoAAAAQAA
       ${ult ? `<div class="grande">${kg(ult.kg)}</div>${tr('<small>em {0}</small>', fmtData(ult.data))}<p class="peq" style="margin-top:6px">${nota}</p>` : `<p class="peq">${tr('Nenhuma pesagem ainda.')}</p>`}
       ${ps.length > 1 ? `<div style="margin-top:10px">${grafico(ps.slice(-12))}</div>` : (ps.length ? '<p class="peq" style="margin-top:8px">' + tr('Registre mais uma pesagem para ver o gráfico.') + '</p>' : '')}
     </div>
+    ${cartaoParceiro('peso', p)}
     <div class="acoes" style="margin-top:14px"><button class="btn" data-act="addpeso">${tr('Registrar peso')}</button></div>
     ${ps.length ? `<h2>${tr('Histórico')}</h2><div class="lista">${ps.slice().reverse().map(x => `<div class="item"><div class="ic">⚖️</div><div class="tx"><b>${kg(x.kg)}</b><small>${fmtData(x.data)}</small></div><button class="x" aria-label="${tra('Apagar pesagem')}" data-act="delpeso:${x.id}">×</button></div>`).join('')}</div>` : ''}`;
   }
@@ -1268,7 +1288,7 @@ const IMG = {"cuidadora": "data:image/webp;base64,UklGRgyVAABXRUJQVlA4WAoAAAAQAA
      NÃO é conta na nuvem, NÃO recupera por e-mail e NÃO criptografa os dados guardados:
      serve para outras pessoas que peguem o celular não abrirem o app. A biometria usa o
      desbloqueio do próprio aparelho (WebAuthn) apenas para liberar a tela. */
-  const APP_V = '0.47';
+  const APP_V = '0.48';
   const LOCK_KEY = 'babypet.lock', LOCK_F = 'babypet.lock.f', LOCK_REL = 2 * 60000;
   let lockAberto = false, lockModo = 'entrar', lockOcultoEm = 0, bioOk = false;
   const lockCfg = () => { try { const c = JSON.parse(localStorage.getItem(LOCK_KEY) || 'null'); return c && c.salt && c.hash ? c : null; } catch (e) { return null; } };
