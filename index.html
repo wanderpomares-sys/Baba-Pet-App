@@ -214,8 +214,8 @@ button{font:inherit;color:inherit;cursor:pointer}
 .sheet .rodape{display:flex;flex-direction:column;align-items:center;gap:8px;margin-top:8px}
 
 #toast{position:fixed;left:50%;top:calc(14px + env(safe-area-inset-top));transform:translate(-50%,-90px);z-index:60;max-width:calc(100% - 32px);
-  padding:14px 20px;border-radius:22px;text-align:center;line-height:1.35;background:var(--ink);color:var(--bg);font-weight:700;font-size:18px;transition:transform .25s}
-#toast.on{transform:translate(-50%,0)}
+  padding:14px 20px;border-radius:22px;text-align:center;line-height:1.35;background:var(--ink);color:var(--bg);font-weight:700;font-size:18px;opacity:0;visibility:hidden;transition:transform .25s,opacity .25s,visibility .25s}
+#toast.on{transform:translate(-50%,0);opacity:1;visibility:visible}
 
 /* boas-vindas */
 .boas{text-align:center;padding:26px 8px}
@@ -1288,7 +1288,7 @@ const IMG = {"cuidadora": "data:image/webp;base64,UklGRgyVAABXRUJQVlA4WAoAAAAQAA
      NÃO é conta na nuvem, NÃO recupera por e-mail e NÃO criptografa os dados guardados:
      serve para outras pessoas que peguem o celular não abrirem o app. A biometria usa o
      desbloqueio do próprio aparelho (WebAuthn) apenas para liberar a tela. */
-  const APP_V = '0.48';
+  const APP_V = '0.49';
   const LOCK_KEY = 'babypet.lock', LOCK_F = 'babypet.lock.f', LOCK_REL = 2 * 60000;
   let lockAberto = false, lockModo = 'entrar', lockOcultoEm = 0, bioOk = false;
   const lockCfg = () => { try { const c = JSON.parse(localStorage.getItem(LOCK_KEY) || 'null'); return c && c.salt && c.hash ? c : null; } catch (e) { return null; } };
