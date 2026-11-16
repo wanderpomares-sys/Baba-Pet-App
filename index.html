@@ -2718,5 +2718,24 @@ const IMG = {"cuidadora": "data:image/webp;base64,UklGRgyVAABXRUJQVlA4WAoAAAAQAA
 })();
 
 </script>
+<script>
+/* ===== Google Analytics (GA4) — medição anônima, sempre ligada (descrita na política de privacidade) ===== */
+(function(){
+  var GA_ID = 'G-G16QMJ72XX';
+  var demo = false; try { demo = localStorage.getItem('babypet.modo') === 'demo'; } catch(e){}
+  if(!GA_ID || demo) return;
+  window.dataLayer = window.dataLayer || [];
+  window.gtag = function(){ dataLayer.push(arguments); };
+  window.addEventListener('load', function(){
+    var sc = document.createElement('script'); sc.async = true;
+    sc.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA_ID;
+    document.head.appendChild(sc);
+    gtag('js', new Date());
+    var standalone = (window.matchMedia && matchMedia('(display-mode: standalone)').matches) || navigator.standalone;
+    gtag('config', GA_ID, { anonymize_ip: true, allow_google_signals: false, allow_ad_personalization_signals: false,
+      user_properties: { modo: standalone ? 'app_instalado' : 'navegador', idioma: (typeof LANG !== 'undefined' && LANG === 'en') ? 'en' : 'pt' } });
+  });
+})();
+</script>
 </body>
 </html>
