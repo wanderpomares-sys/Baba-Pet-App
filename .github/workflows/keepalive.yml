@@ -1,0 +1,17 @@
+name: Manter Supabase ativo
+
+on:
+  schedule:
+    - cron: '0 12 */2 * *'
+  workflow_dispatch:
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Consulta simples ao banco (chave anon publica, a mesma do index.html)
+        run: |
+          curl --fail --silent --show-error \
+            "https://enimhzzqrsstwvtvquhv.supabase.co/rest/v1/events?select=*&limit=1" \
+            -H "apikey: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVuaW1oenpxcnNzdHd2dHZxdWh2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE5MDE2MTMsImV4cCI6MjEwNzQ3NzYxM30.JBp11L3SO6NkrhivbswRtGMOVRSFUoMemcMcSYirYNo" \
+            -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVuaW1oenpxcnNzdHd2dHZxdWh2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE5MDE2MTMsImV4cCI6MjEwNzQ3NzYxM30.JBp11L3SO6NkrhivbswRtGMOVRSFUoMemcMcSYirYNo"
