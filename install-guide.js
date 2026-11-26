@@ -32,7 +32,8 @@
       done: 'Pronto! O ícone do {n} aparece na sua tela inicial. Abra por ele.',
       ldots: 'Toque aqui', litem: 'Instalar app', lshare: 'Compartilhar', ladd: 'Adicionar à Tela de Início', lhome: 'Pronto!', linapp: 'Abrir no navegador', linst: 'Instalar',
       bt: 'Quer instalar o {n} no seu celular?', bd: 'Sem Play Store, direto do navegador', bb: 'Sim, me ensina', no: 'Agora não', have: 'Já instalei', ok: 'Fechar',
-      thanks: '{n} instalado! Abra pelo ícone da tela inicial.'
+      thanks: '{n} instalado! Abra pelo ícone da tela inicial.',
+      hint: 'Já tem o {n} instalado? Então abra pelo ícone na tela inicial do celular, sem precisar instalar de novo.'
     },
     en: {
       title: 'Install {n} on your phone', hi: "I'll show you in a few easy steps!", c1: 'Free', c2: 'No app store', c3: 'Uses little space',
@@ -47,7 +48,8 @@
       done: 'Done! The {n} icon now appears on your home screen. Open the app from it.',
       ldots: 'Tap here', litem: 'Install app', lshare: 'Share', ladd: 'Add to Home Screen', lhome: 'Done!', linapp: 'Open in browser', linst: 'Install',
       bt: 'Want to install {n} on your phone?', bd: 'No app store, straight from your browser', bb: 'Yes, show me', no: 'Not now', have: 'I already installed it', ok: 'Close',
-      thanks: '{n} installed! Open it from the home screen icon.'
+      thanks: '{n} installed! Open it from the home screen icon.',
+      hint: 'Already have {n} installed? Just open it from the icon on your home screen. No need to install it again.'
     },
     es: {
       title: 'Instala {n} en tu celular', hi: '¡Te enseño en pocos pasos!', c1: 'Gratis', c2: 'Sin tienda de apps', c3: 'Ocupa poco espacio',
@@ -62,7 +64,8 @@
       done: '¡Listo! El ícono de {n} aparece en tu pantalla de inicio. Ábrela desde ahí.',
       ldots: 'Toca aquí', litem: 'Instalar aplicación', lshare: 'Compartir', ladd: 'Añadir a pantalla de inicio', lhome: '¡Listo!', linapp: 'Abrir en el navegador', linst: 'Instalar',
       bt: '¿Quieres instalar {n} en tu celular?', bd: 'Sin tienda de apps, directo del navegador', bb: 'Sí, enséñame', no: 'Ahora no', have: 'Ya lo instalé', ok: 'Cerrar',
-      thanks: '¡{n} instalado! Ábrelo desde el ícono de la pantalla de inicio.'
+      thanks: '¡{n} instalado! Ábrelo desde el ícono de la pantalla de inicio.',
+      hint: '¿Ya tienes {n} instalado? Ábrelo desde el ícono en la pantalla de inicio, sin instalarlo de nuevo.'
     },
     fr: {
       title: 'Installez {n} sur votre téléphone', hi: 'Je vous montre en quelques étapes !', c1: 'Gratuit', c2: "Sans magasin d'apps", c3: 'Prend peu de place',
@@ -77,7 +80,8 @@
       done: "Terminé ! L'icône de {n} apparaît sur votre écran d'accueil. Ouvrez l'appli depuis là.",
       ldots: 'Touchez ici', litem: "Installer l'application", lshare: 'Partager', ladd: "Sur l'écran d'accueil", lhome: 'Terminé !', linapp: 'Ouvrir dans le navigateur', linst: 'Installer',
       bt: 'Voulez-vous installer {n} sur votre téléphone ?', bd: "Sans magasin d'apps, depuis le navigateur", bb: 'Oui, montrez-moi', no: 'Pas maintenant', have: "Je l'ai déjà installé", ok: 'Fermer',
-      thanks: "{n} installé ! Ouvrez-le depuis l'icône de l'écran d'accueil."
+      thanks: "{n} installé ! Ouvrez-le depuis l'icône de l'écran d'accueil.",
+      hint: "{n} est déjà installé ? Ouvrez-le depuis l'icône de l'écran d'accueil, inutile de le réinstaller."
     }
   };
   function lang() {
@@ -168,7 +172,7 @@
     var warn = inApp() ? '<div class="iwarn"><b>⚠️ ' + esc(t('iat')) + '</b><p>' + esc(t('iad')) + '</p>' + SCN.inapp(t('linapp')) + '<button class="igb" data-ig="copy">🔗 ' + esc(t('copy')) + '</button></div>' : '';
     var now = (ST.dp && p === 'and') ? '<button class="ibtn" data-ig="go">📲 ' + esc(t('now')) + '</button><p class="inote c">' + esc(t('or')) + '</p>' : '';
     var m = document.createElement('div'); m.id = 'igmod';
-    m.innerHTML = '<div class="ibox"><div class="ihd">' + img() + '<div class="ibub">' + esc(t('hi')) + '</div></div><h2>📲 ' + esc(t('title')) + '</h2><div class="ichips"><span>✅ ' + esc(t('c1')) + '</span><span>✅ ' + esc(t('c2')) + '</span><span>✅ ' + esc(t('c3')) + '</span></div><p class="iwhy">' + esc(t('why')) + '</p>' + warn + now + '<div class="itabs">' + tabs + '</div><div id="igbody">' + body(p) + '</div><button class="igb" data-ig="close">' + esc(t('ok')) + '</button></div>';
+    m.innerHTML = '<div class="ibox"><div class="ihd">' + img() + '<div class="ibub">' + esc(t('hi')) + '</div></div><h2>📲 ' + esc(t('title')) + '</h2><div class="ichips"><span>✅ ' + esc(t('c1')) + '</span><span>✅ ' + esc(t('c2')) + '</span><span>✅ ' + esc(t('c3')) + '</span></div><p class="iwhy">' + esc(t('why')) + '</p><p class="inote">💡 ' + esc(t('hint')) + '</p><button class="igb" data-ig="have">✅ ' + esc(t('have')) + '</button>' + warn + now + '<div class="itabs">' + tabs + '</div><div id="igbody">' + body(p) + '</div><button class="igb" data-ig="close">' + esc(t('ok')) + '</button></div>';
     document.body.appendChild(m); ga('install_guide_open', { plat: p, inapp: inApp() ? 1 : 0 });
   }
   function nativePrompt(after) {
@@ -180,13 +184,30 @@
     var a = el.getAttribute('data-ig');
     if (a === 'open') { barHide(); ga('install_banner_yes'); if (!(ST.dp && !isIOS() && nativePrompt(openModal))) openModal(); }
     else if (a === 'no') { barHide(); ST.snooze = true; try { sessionStorage.setItem(SKEY, '1'); } catch (x) { } ga('install_banner_no'); }
-    else if (a === 'have') { barHide(); setDone(); ga('install_have'); }
+    else if (a === 'have') { barHide(); modHide(); setDone(); ga('install_have'); }
     else if (a === 'plat') { ST.plat = el.getAttribute('data-p'); var ts = document.querySelectorAll('#igmod .itab'); for (var i = 0; i < ts.length; i++) ts[i].classList.toggle('on', ts[i].getAttribute('data-p') === ST.plat); var bd = document.getElementById('igbody'); if (bd) bd.innerHTML = body(ST.plat); }
     else if (a === 'go') nativePrompt(null);
     else if (a === 'copy') { var u = D.url || location.href.split('#')[0]; try { navigator.clipboard.writeText(u).then(function () { toast(t('copied')); }, function () { }); } catch (x) { } }
     else if (a === 'close') { modHide(); ST.snooze = true; }
   }, true);
 
+  /* Evita insistir com quem já instalou:
+     - aberto como app (standalone) => instalado;
+     - Chrome informa apps relacionados instalados (manifest.related_applications) => instalado;
+     - Android/PC: o navegador só oferece instalar (beforeinstallprompt) quando o app NÃO está instalado.
+       Sem esse evento, não perguntamos (já instalado ou não instalável aqui);
+     - iPhone não permite detectar: pergunta, mas com "Já instalei" e dica de abrir pelo ícone. */
+  var checked = false;
+  function checkRelated() {
+    if (checked) return; checked = true;
+    try { if (navigator.getInstalledRelatedApps) navigator.getInstalledRelatedApps().then(function (a) { if (a && a.length) { setDone(); barHide(); } }).catch(function () { }); } catch (e) { }
+  }
+  function canAsk() {
+    if (isIOS()) return true;
+    if (inApp()) return true;                 // aqui só dá para orientar a abrir no navegador
+    if (/Firefox|FxiOS/i.test(UA) && isAndroid()) return true;
+    return !!ST.dp;                           // Chrome/Edge/Samsung: só se o navegador oferece instalar
+  }
   function tick() {
     try {
       if (standalone()) { setDone(); barHide(); return; }
@@ -194,6 +215,8 @@
       if (document.getElementById('igbar') || document.getElementById('igmod')) return;
       var ae = document.activeElement; if (ae && /INPUT|TEXTAREA|SELECT/.test(ae.tagName)) return;
       if (document.hidden) return;
+      checkRelated();
+      if (!canAsk()) return;
       barShow();
     } catch (e) { }
   }

@@ -29,5 +29,11 @@
       "type": "image/png",
       "purpose": "maskable"
     }
+  ],
+  "related_applications": [
+    {
+      "platform": "webapp",
+      "url": "https://babadopet.com.br/manifest.json"
+    }
   ]
 }
